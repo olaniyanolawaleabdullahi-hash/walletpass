@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletPass Admin Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f5f5f5; }
+    
+    .navbar {
+      background: #000;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar h1 { color: #FFD700; font-size: 20px; }
+    .navbar span { color: #fff; font-size: 14px; }
+
+    .container { padding: 24px; max-width: 1100px; margin: 0 auto; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #eee;
+    }
+    .stat-card h2 { font-size: 32px; color: #000; }
+    .stat-card p { font-size: 13px; color: #888; margin-top: 4px; }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid #eee;
+      margin-bottom: 24px;
+    }
+    .card h3 {
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: #000;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; color: #555; font-weight: 500; }
+    .form-group input, .form-group select {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: #FFD700;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn-primary { background: #000; color: #FFD700; }
+    .btn-primary:hover { background: #222; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      background: #f9f9f9;
+      color: #555;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    td { padding: 12px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    tr:last-child td { border-bottom: none; }
+
+    .badge {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .badge-gold { background: #FFF8E1; color: #F57F17; }
+    .badge-silver { background: #F5F5F5; color: #616161; }
+    .badge-bronze { background: #FBE9E7; color: #BF360C; }
+
+    .download-btn {
+      padding: 6px 14px;
+      background: #000;
+      color: #FFD700;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <h1>WalletPass Admin</h1>
+    <span>Welcome, Staff</span>
+  </div>
+
+  <div class="container">
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <h2 id="totalCards">0</h2>
+        <p>Total Cards Issued</p>
+      </div>
+      <div class="stat-card">
+        <h2 id="totalGold">0</h2>
+        <p>Gold Members</p>
+      </div>
+      <div class="stat-card">
+        <h2 id="totalSilver">0</h2>
+        <p>Silver Members</p>
+      </div>
+    </div>
+
+    <!-- Issue New Card -->
+    <div class="card">
+      <h3>Issue New Card</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Customer Name</label>
+          <input type="text" id="customerName" placeholder="e.g. John Adeyemi" />
+        </div>
+        <div class="form-group">
+          <label>Member ID</label>
+          <input type="text" id="memberId" placeholder="e.g. MEMBER002" />
+        </div>
+        <div class="form-group">
+          <label>Points</label>
+          <input type="number" id="points" placeholder="e.g. 500" />
+        </div>
+        <div class="form-group">
+          <label>Loyalty Status</label>
+          <select id="loyaltyStatus">
+            <option value="Bronze Member">Bronze Member</option>
+            <option value="Silver Member">Silver Member</option>
+            <option value="Gold Member">Gold Member</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Expiry Date</label>
+          <input type="text" id="expiryDate" placeholder="e.g. 12/2026" />
+        </div>
+        <div class="form-group">
+          <label>Business Name</label>
+          <input type="text" id="businessName" placeholder="e.g. LoyaltyPass Co." />
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="issueCard()">Issue Card</button>
+      <p id="issueMessage" style="margin-top:10px;font-size:13px;color:green;"></p>
+    </div>
+
+    <!-- Members Table -->
+    <div class="card">
+      <h3>All Members</h3>
+      <div id="loadingMsg" class="loading">Loading members...</div>
+      <table id="membersTableWrapper" style="display:none;">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Member ID</th>
+            <th>Points</th>
+            <th>Status</th>
+            <th>Expires</th>
+            <th>Card</th>
+          </tr>
+        </thead>
+        <tbody id="membersTable"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    async function loadMembers() {
+      try {
+        const response = await fetch('/members');
+        const members = await response.json();
+
+        const tbody = document.getElementById('membersTable');
+        tbody.innerHTML = '';
+
+        let goldCount = 0;
+        let silverCount = 0;
+
+        members.forEach(member => {
+          const badgeClass = member.loyaltyStatus === 'Gold Member' ? 'badge-gold' :
+                            member.loyaltyStatus === 'Silver Member' ? 'badge-silver' : 'badge-bronze';
+          if (member.loyaltyStatus === 'Gold Member') goldCount++;
+          if (member.loyaltyStatus === 'Silver Member') silverCount++;
+
+          const row = `<tr>
+            <td>${member.name}</td>
+            <td>${member.memberId}</td>
+            <td>${parseInt(member.points).toLocaleString()}</td>
+            <td><span class="badge ${badgeClass}">${member.loyaltyStatus}</span></td>
+            <td>${member.expiryDate}</td>
+<td>
+  <button class="download-btn" onclick="downloadCard('${member.memberId}')">Download</button>
+  <button class="download-btn" style="background:#FFD700;color:#000;margin-left:6px;" onclick="updateMember('${member.id}', ${member.points}, '${member.loyaltyStatus}')">Update</button>
+</td>          </tr>`;
+          tbody.innerHTML += row;
+        });
+
+        document.getElementById('totalCards').textContent = members.length;
+        document.getElementById('totalGold').textContent = goldCount;
+        document.getElementById('totalSilver').textContent = silverCount;
+        document.getElementById('loadingMsg').style.display = 'none';
+        document.getElementById('membersTableWrapper').style.display = 'table';
+
+      } catch (error) {
+        document.getElementById('loadingMsg').textContent = 'Error loading members!';
+        console.error(error);
+      }
+    }
+
+    async function issueCard() {
+      const name = document.getElementById('customerName').value;
+      const memberId = document.getElementById('memberId').value;
+      const points = document.getElementById('points').value;
+      const loyaltyStatus = document.getElementById('loyaltyStatus').value;
+      const expiryDate = document.getElementById('expiryDate').value;
+      const businessName = document.getElementById('businessName').value;
+
+      if (!name || !memberId || !points || !expiryDate || !businessName) {
+        document.getElementById('issueMessage').style.color = 'red';
+        document.getElementById('issueMessage').textContent = 'Please fill in all fields!';
+        return;
+      }
+
+      try {
+        const response = await fetch('/members/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, memberId, points: parseInt(points), loyaltyStatus, expiryDate, businessName })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          document.getElementById('issueMessage').style.color = 'green';
+          document.getElementById('issueMessage').textContent = `Card issued successfully for ${name}!`;
+          document.getElementById('customerName').value = '';
+          document.getElementById('memberId').value = '';
+          document.getElementById('points').value = '';
+          document.getElementById('expiryDate').value = '';
+          document.getElementById('businessName').value = '';
+          loadMembers();
+        }
+      } catch (error) {
+        document.getElementById('issueMessage').style.color = 'red';
+        document.getElementById('issueMessage').textContent = 'Error issuing card!';
+        console.error(error);
+      }
+    }
+
+   function downloadCard(memberId) {
+      window.open(`/card/download?id=${memberId}`, '_blank');
+    }
+
+    async function updateMember(memberId, currentPoints, currentStatus) {
+      const newPoints = prompt('Enter new points:', currentPoints);
+      if (newPoints === null) return;
+
+      const newStatus = prompt('Enter new status (Bronze Member, Silver Member, Gold Member):', currentStatus);
+      if (newStatus === null) return;
+
+      try {
+        const response = await fetch('/members/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            memberId: memberId,
+            updatedData: {
+              points: parseInt(newPoints),
+              loyaltyStatus: newStatus
+            }
+          })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert('Member updated successfully!');
+          loadMembers();
+        }
+      } catch (error) {
+        alert('Error updating member!');
+        console.error(error);
+      }
+    }
+
+    loadMembers();
+  </script>
+
+</body>
+</html>

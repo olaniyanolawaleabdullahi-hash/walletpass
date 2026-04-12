@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletPass Admin Login</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .login-card {
+      background: #111;
+      border: 1px solid #FFD700;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-card h1 {
+      color: #FFD700;
+      font-size: 24px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .login-card p {
+      color: #888;
+      font-size: 13px;
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      font-size: 13px;
+      color: #aaa;
+      font-weight: 500;
+    }
+    .form-group input {
+      padding: 12px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      background: #222;
+      color: #fff;
+    }
+    .form-group input:focus {
+      border-color: #FFD700;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #FFD700;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .btn:hover { background: #FFC800; }
+    .error-msg {
+      color: #ff4444;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h1>WalletPass Admin</h1>
+    <p>Sign in to manage your loyalty cards</p>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="your@email.com" />
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="••••••••" />
+    </div>
+
+    <button class="btn" onclick="login()">Sign In</button>
+    <p class="error-msg" id="errorMsg"></p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBMOR53eRC_eafMewxKuiDRFSyzMyil5f0",
+      authDomain: "walletpass-admin.firebaseapp.com",
+      projectId: "walletpass-admin",
+      storageBucket: "walletpass-admin.firebasestorage.app",
+      messagingSenderId: "643004300341",
+      appId: "1:643004300341:web:4080b5a008d72d145e857c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = async function() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        document.getElementById('errorMsg').textContent = 'Please fill in all fields!';
+        return;
+      }
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = '/';
+      } catch (error) {
+        document.getElementById('errorMsg').textContent = 'Invalid email or password!';
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
