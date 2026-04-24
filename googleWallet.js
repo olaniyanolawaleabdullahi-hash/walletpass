@@ -7,10 +7,16 @@ async function generateGoogleWalletLink(customerData) {
   const classSuffix = 'loyaltyClass';
   const objectSuffix = customerData.id;
 
-  const serviceAccount = JSON.parse(fs.readFileSync('./google-service-account.json'));
+  let serviceAccount;
+  
+  if (process.env.GOOGLE_SERVICE_ACCOUNT) {
+    serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+  } else {
+    serviceAccount = JSON.parse(fs.readFileSync('./google-service-account.json'));
+  }
 
   const auth = new GoogleAuth({
-    keyFile: './google-service-account.json',
+    credentials: serviceAccount,
     scopes: ['https://www.googleapis.com/auth/wallet_object.issuer']
   });
 
@@ -50,6 +56,11 @@ async function generateGoogleWalletLink(customerData) {
     await client.request({
       url: `https://walletobjects.googleapis.com/walletobjects/v1/loyaltyObject/${issuerId}.${objectSuffix}`,
       method: 'GET'
+    });
+    await client.request({
+      url: `https://walletobjects.googleapis.com/walletobjects/v1/loyaltyObject/${issuerId}.${objectSuffix}`,
+      method: 'PUT',
+      data: loyaltyObject
     });
   } catch (e) {
     await client.request({
