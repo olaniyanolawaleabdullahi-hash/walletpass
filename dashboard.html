@@ -215,8 +215,24 @@
           <input type="text" id="businessName" placeholder="e.g. LoyaltyPass Co." />
         </div>
       </div>
-      <button class="btn btn-primary" onclick="issueCard()">Issue Card</button>
-      <p id="issueMessage" style="margin-top:10px;font-size:13px;color:green;"></p>
+    <button class="btn btn-primary" onclick="issueCard()">Issue Card</button>
+<p id="issueMessage" style="margin-top:10px;font-size:13px;color:green;"></p>
+
+<div id="shareOptions" style="display:none;margin-top:16px;padding:16px;background:#f9f9f9;border-radius:8px;border:1px solid #eee;">
+  <p style="font-size:13px;font-weight:500;margin-bottom:10px;color:#333;">Share card with customer:</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <button class="btn" id="whatsappBtn" style="background:#25D366;color:#fff;display:flex;align-items:center;gap:6px;" onclick="shareWhatsApp()">
+      WhatsApp
+    </button>
+    <button class="btn" id="emailBtn" style="background:#0072C6;color:#fff;display:flex;align-items:center;gap:6px;" onclick="shareEmail()">
+      Email
+    </button>
+    <button class="btn" style="background:#f0f0f0;color:#333;" onclick="copyLink()">
+      Copy Link
+    </button>
+  </div>
+  <p id="cardLink" style="font-size:11px;color:#888;margin-top:10px;word-break:break-all;"></p>
+</div>
     </div>
 
     <!-- Members Table -->
@@ -283,7 +299,28 @@
         console.error(error);
       }
     }
+let currentMemberId = '';
+let currentMemberName = '';
 
+function shareWhatsApp() {
+  const link = `https://walletpass-dp2j.onrender.com/card/google?id=${currentMemberId}`;
+  const message = `Hi ${currentMemberName}! Your loyalty card is ready. Click the link below to add it to your Google Wallet: ${link}`;
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, '_blank');
+}
+
+function shareEmail() {
+  const link = `https://walletpass-dp2j.onrender.com/card/google?id=${currentMemberId}`;
+  const subject = `Your Loyalty Card is Ready!`;
+  const body = `Hi ${currentMemberName}!\n\nYour loyalty card is ready. Click the link below to add it to your Google Wallet:\n\n${link}\n\nThank you!`;
+  window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function copyLink() {
+  const link = `https://walletpass-dp2j.onrender.com/card/google?id=${currentMemberId}`;
+  navigator.clipboard.writeText(link);
+  document.getElementById('cardLink').textContent = 'Link copied! ' + link;
+}
     async function issueCard() {
       const name = document.getElementById('customerName').value;
       const memberId = document.getElementById('memberId').value;
@@ -307,9 +344,13 @@
 
         const result = await response.json();
 
-        if (result.success) {
+       if (result.success) {
+          currentMemberId = memberId;
+          currentMemberName = name;
           document.getElementById('issueMessage').style.color = 'green';
           document.getElementById('issueMessage').textContent = `Card issued successfully for ${name}!`;
+          document.getElementById('shareOptions').style.display = 'block';
+          document.getElementById('cardLink').textContent = `Card link: https://walletpass-dp2j.onrender.com/card/google?id=${memberId}`;
           document.getElementById('customerName').value = '';
           document.getElementById('memberId').value = '';
           document.getElementById('points').value = '';

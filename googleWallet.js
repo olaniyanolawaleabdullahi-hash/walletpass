@@ -10,9 +10,12 @@ async function generateGoogleWalletLink(customerData) {
   let serviceAccount;
   
   if (process.env.GOOGLE_SERVICE_ACCOUNT) {
-    serviceAccount = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT);
+    const raw = process.env.GOOGLE_SERVICE_ACCOUNT;
+    serviceAccount = JSON.parse(raw);
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
   } else {
     serviceAccount = JSON.parse(fs.readFileSync('./google-service-account.json'));
+    serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
   }
 
   const auth = new GoogleAuth({

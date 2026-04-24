@@ -93,8 +93,8 @@ app.get('/card/google', async (req, res) => {
   const googleWalletLink = await generateGoogleWalletLink(customerData);
 res.redirect(googleWalletLink);
   } catch (error) {
-    console.error('Error generating Google Wallet link:', error);
-    res.status(500).json({ error: 'Failed to generate Google Wallet link' });
+    console.error('GOOGLE WALLET ERROR:', error.message || error);
+    res.status(500).json({ error: 'Failed to generate Google Wallet link', details: error.message });
   }
 });
 app.listen(port, () => {
