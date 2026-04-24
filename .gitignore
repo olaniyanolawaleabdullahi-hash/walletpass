@@ -1,3 +1,4 @@
 node_modules
 .env
 passes
+google-service-account.json

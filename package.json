@@ -17,6 +17,8 @@
     "express": "^5.2.1",
     "firebase": "^12.12.0",
     "forge": "^2.3.0",
+    "google-auth-library": "^10.6.2",
+    "jsonwebtoken": "^9.0.3",
     "node-forge": "^1.4.0"
   }
 }

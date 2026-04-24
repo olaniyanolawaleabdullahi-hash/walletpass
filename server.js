@@ -3,7 +3,7 @@ const path = require('path');
 const { createLoyaltyCard } = require('./card');
 const { generatePass } = require('./generatePass');
 const { addMember, getAllMembers, updateMember } = require('./firebase');
-const app = express();
+const { generateGoogleWalletLink } = require('./googleWallet');const app = express();
 const port = 3000;
 
 app.use(express.json());
@@ -72,7 +72,31 @@ app.get('/card/download', async (req, res) => {
     res.status(500).json({ error: 'Failed to generate pass' });
   }
 });
+app.get('/card/google', async (req, res) => {
+  try {
+    const members = await getAllMembers();
+    const member = members.find(m => m.memberId === req.query.id);
 
+    if (!member) {
+      return res.status(404).json({ error: 'Member not found' });
+    }
+
+    const customerData = {
+      id: member.memberId,
+      businessName: member.businessName,
+      name: member.name,
+      points: member.points,
+      loyaltyStatus: member.loyaltyStatus,
+      expiryDate: member.expiryDate
+    };
+
+  const googleWalletLink = await generateGoogleWalletLink(customerData);
+res.redirect(googleWalletLink);
+  } catch (error) {
+    console.error('Error generating Google Wallet link:', error);
+    res.status(500).json({ error: 'Failed to generate Google Wallet link' });
+  }
+});
 app.listen(port, () => {
   console.log(`WalletPass server running on http://localhost:${port}`);
 }); 

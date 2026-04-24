@@ -229,9 +229,10 @@
             <td><span class="badge ${badgeClass}">${member.loyaltyStatus}</span></td>
             <td>${member.expiryDate}</td>
 <td>
-  <button class="download-btn" onclick="downloadCard('${member.memberId}')">Download</button>
+  <button class="download-btn" onclick="downloadCard('${member.memberId}')">Apple</button>
+  <button class="download-btn" style="background:#4285F4;color:#fff;margin-left:6px;" onclick="googleWalletCard('${member.memberId}')">Google</button>
   <button class="download-btn" style="background:#FFD700;color:#000;margin-left:6px;" onclick="updateMember('${member.id}', ${member.points}, '${member.loyaltyStatus}')">Update</button>
-</td>          </tr>`;
+</td>         </tr>`;
           tbody.innerHTML += row;
         });
 
@@ -290,6 +291,9 @@
    function downloadCard(memberId) {
       window.open(`/card/download?id=${memberId}`, '_blank');
     }
+    function googleWalletCard(memberId) {
+  window.open(`/card/google?id=${memberId}`, '_blank');
+}
 
     async function updateMember(memberId, currentPoints, currentStatus) {
       const newPoints = prompt('Enter new points:', currentPoints);
