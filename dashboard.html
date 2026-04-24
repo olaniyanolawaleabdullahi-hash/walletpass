@@ -26,30 +26,40 @@
       gap: 16px;
       margin-bottom: 24px;
     }
-
 @media (max-width: 768px) {
       .stats {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .stat-card h2 {
+        font-size: 20px;
+      }
+      .stat-card p {
+        font-size: 11px;
       }
       .form-grid {
         grid-template-columns: 1fr;
-      }
-      table {
-        font-size: 12px;
-      }
-      td, th {
-        padding: 8px 6px;
-      }
-      .download-btn {
-        padding: 4px 8px;
-        font-size: 11px;
-        margin-bottom: 4px;
       }
       .container {
         padding: 12px;
       }
       .navbar h1 {
         font-size: 16px;
+      }
+      table {
+        font-size: 11px;
+      }
+      td, th {
+        padding: 6px 4px;
+      }
+      .download-btn {
+        padding: 4px 6px;
+        font-size: 10px;
+        display: block;
+        margin-bottom: 3px;
+        width: 100%;
+      }
+      .card {
+        overflow-x: auto;
       }
     }
     .stat-card {
