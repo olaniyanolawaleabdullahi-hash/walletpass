@@ -34,7 +34,17 @@ app.post('/members/add', async (req, res) => {
     res.status(500).json({ error: 'Failed to add member' });
   }
 });
-
+app.post('/members/delete', async (req, res) => {
+  try {
+    const { memberId } = req.body;
+    const { db } = require('./firebase');
+    const { doc, deleteDoc } = require('firebase/firestore');
+    await deleteDoc(doc(db, 'members', memberId));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete member' });
+  }
+});
 app.post('/members/update', async (req, res) => {
   try {
     const { memberId, updatedData } = req.body;

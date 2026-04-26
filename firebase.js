@@ -1,6 +1,5 @@
 const { initializeApp } = require('firebase/app');
-const { getFirestore, collection, addDoc, getDocs, doc, updateDoc } = require('firebase/firestore');
-
+const { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } = require('firebase/firestore');
 const firebaseConfig = {
   apiKey: "AIzaSyBMOR53eRC_eafMewxKuiDRFSyzMyil5f0",
   authDomain: "walletpass-admin.firebaseapp.com",

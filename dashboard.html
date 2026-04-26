@@ -238,6 +238,11 @@
     <!-- Members Table -->
     <div class="card">
       <h3>All Members</h3>
+      <div style="margin-bottom:16px;">
+        <input type="text" id="searchInput" placeholder="Search by name or member ID..." 
+        oninput="searchMembers()" 
+        style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;"/>
+      </div>
       <div id="loadingMsg" class="loading">Loading members...</div>
       <table id="membersTableWrapper" style="display:none;">
         <thead>
@@ -283,8 +288,8 @@
 <td>
   <button class="download-btn" onclick="downloadCard('${member.memberId}')">Apple</button>
   <button class="download-btn" style="background:#4285F4;color:#fff;margin-left:6px;" onclick="googleWalletCard('${member.memberId}')">Google</button>
-  <button class="download-btn" style="background:#FFD700;color:#000;margin-left:6px;" onclick="updateMember('${member.id}', ${member.points}, '${member.loyaltyStatus}')">Update</button>
-</td>         </tr>`;
+<button class="download-btn" style="background:#FFD700;color:#000;margin-left:6px;" onclick="updateMember('${member.id}', ${member.points}, '${member.loyaltyStatus}')">Update</button>
+<button class="download-btn" style="background:#ff4444;color:#fff;margin-left:6px;" onclick="deleteMember('${member.id}', '${member.name}')">Delete</button></td>         </tr>`;
           tbody.innerHTML += row;
         });
 
@@ -404,7 +409,43 @@ function copyLink() {
     }
 
     loadMembers();
+      async function deleteMember(memberId, memberName) {
+      if (!confirm(`Are you sure you want to delete ${memberName}?`)) return;
+
+      try {
+        const response = await fetch('/members/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ memberId })
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert(`${memberName} has been deleted!`);
+          loadMembers();
+        }
+      } catch (error) {
+        alert('Error deleting member!');
+        console.error(error);
+      }
+    }
+    function searchMembers() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#membersTable tr');
+      
+      rows.forEach(row => {
+        const name = row.cells[0]?.textContent.toLowerCase() || '';
+        const memberId = row.cells[1]?.textContent.toLowerCase() || '';
+        
+        if (name.includes(searchTerm) || memberId.includes(searchTerm)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
   </script>
+
 
 </body>
 </html>
