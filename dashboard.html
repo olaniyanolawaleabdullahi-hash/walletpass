@@ -114,7 +114,7 @@
 <button onclick="logout()" style="padding:6px 14px;background:#2a0000;color:#ff4444;border:0.5px solid #ff4444;border-radius:20px;font-size:12px;cursor:pointer;">Logout</button>    </div>
 
     <!-- STATS -->
-    <div class="stats-grid">
+    <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
       <div class="stat-card">
         <div class="stat-label">Total Cards</div>
         <div class="stat-value" id="totalCards">0</div>
@@ -126,6 +126,10 @@
       <div class="stat-card">
         <div class="stat-label">Silver Members</div>
         <div class="stat-value" id="totalSilver">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Bronze Members</div>
+        <div class="stat-value" id="totalBronze">0</div>
       </div>
     </div>
 
@@ -185,16 +189,17 @@
         const response = await fetch('/members');
         const members = await response.json();
 
-        let goldCount = 0, silverCount = 0;
+        let goldCount = 0, silverCount = 0, bronzeCount = 0;
         members.forEach(m => {
           if (m.loyaltyStatus === 'Gold Member') goldCount++;
           if (m.loyaltyStatus === 'Silver Member') silverCount++;
+          if (m.loyaltyStatus === 'Bronze Member') bronzeCount++;
         });
 
         document.getElementById('totalCards').textContent = members.length;
         document.getElementById('totalGold').textContent = goldCount;
         document.getElementById('totalSilver').textContent = silverCount;
-        document.getElementById('loadingMsg').style.display = 'none';
+        document.getElementById('totalBronze').textContent = bronzeCount;
 
         const recentList = document.getElementById('recentList');
         const recent = members.slice(-5).reverse();
