@@ -16,6 +16,14 @@ app.get('/login', (req, res) => {
   res.sendFile(path.resolve('login.html'));
 });
 
+app.get('/members-page', (req, res) => {
+  res.sendFile(path.resolve('members.html'));
+});
+
+app.get('/issue', (req, res) => {
+  res.sendFile(path.resolve('issue.html'));
+});
+
 app.get('/members', async (req, res) => {
   try {
     const members = await getAllMembers();

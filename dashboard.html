@@ -3,449 +3,219 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WalletPass Admin Dashboard</title>
+  <title>WalletPass Admin</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #f5f5f5; }
-    
-    .navbar {
-      background: #000;
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    body { font-family: Arial, sans-serif; background: #111; color: #fff; display: flex; min-height: 100vh; }
+    .sidebar { width: 220px; background: #000; border-right: 0.5px solid #222; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; transition: transform 0.3s; }
+    .sidebar-logo { padding: 24px 20px; border-bottom: 0.5px solid #1a1a1a; }
+    .sidebar-logo h1 { font-size: 18px; color: #FFD700; font-weight: 700; }
+    .sidebar-logo p { font-size: 11px; color: #444; margin-top: 2px; }
+    .sidebar-nav { padding: 16px 10px; flex: 1; }
+    .nav-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 4px; cursor: pointer; font-size: 13px; color: #555; transition: all 0.2s; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-item:hover { background: #1a1a1a; color: #fff; }
+    .nav-item.active { background: #FFD700; color: #000; font-weight: 500; }
+    .sidebar-footer { padding: 16px 20px; border-top: 0.5px solid #1a1a1a; font-size: 11px; color: #333; }
+    .main { margin-left: 220px; flex: 1; padding: 24px; min-height: 100vh; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .topbar h2 { font-size: 20px; color: #FFD700; font-weight: 500; }
+    .staff-badge { font-size: 12px; color: #555; background: #1a1a1a; padding: 6px 14px; border-radius: 20px; border: 0.5px solid #222; }
+    .hamburger { display: none; background: none; border: none; color: #FFD700; font-size: 22px; cursor: pointer; }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #000; border: 0.5px solid #222; border-radius: 12px; padding: 20px; }
+    .stat-label { font-size: 11px; color: #555; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .stat-value { font-size: 28px; font-weight: 700; color: #FFD700; }
+    .quick-links { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+    .quick-card { background: #000; border: 0.5px solid #222; border-radius: 12px; padding: 24px; text-decoration: none; transition: border-color 0.2s; }
+    .quick-card:hover { border-color: #FFD700; }
+    .quick-card h3 { font-size: 15px; color: #FFD700; margin-bottom: 6px; }
+    .quick-card p { font-size: 12px; color: #444; }
+    .recent-card { background: #000; border: 0.5px solid #222; border-radius: 12px; padding: 20px; }
+    .card-title { font-size: 14px; font-weight: 500; color: #FFD700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 0.5px solid #1a1a1a; }
+    .member-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 0.5px solid #1a1a1a; }
+    .member-row:last-child { border-bottom: none; }
+    .member-name { font-size: 13px; color: #ccc; }
+    .member-id { font-size: 11px; color: #444; margin-top: 2px; }
+    .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+    .badge-gold { background: #2a2000; color: #FFD700; border: 0.5px solid #FFD700; }
+    .badge-silver { background: #1a1a1a; color: #aaa; border: 0.5px solid #444; }
+    .badge-bronze { background: #1a0f00; color: #cd7f32; border: 0.5px solid #cd7f32; }
+    .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99; }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .overlay.show { display: block; }
+      .main { margin-left: 0; padding: 16px; }
+      .hamburger { display: block; }
+      .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .stat-card { padding: 12px; }
+      .stat-value { font-size: 20px; }
+      .quick-links { grid-template-columns: 1fr; }
     }
-    .navbar h1 { color: #FFD700; font-size: 20px; }
-    .navbar span { color: #fff; font-size: 14px; }
-
-    .container { padding: 24px; max-width: 1100px; margin: 0 auto; }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-@media (max-width: 768px) {
-      .stats {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      .stat-card h2 {
-        font-size: 20px;
-      }
-      .stat-card p {
-        font-size: 11px;
-      }
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-      .container {
-        padding: 12px;
-      }
-      .navbar h1 {
-        font-size: 16px;
-      }
-      table {
-        font-size: 11px;
-      }
-      td, th {
-        padding: 6px 4px;
-      }
-      .download-btn {
-        padding: 4px 6px;
-        font-size: 10px;
-        display: block;
-        margin-bottom: 3px;
-        width: 100%;
-      }
-      .card {
-        overflow-x: auto;
-      }
-    }
-    .stat-card {
-      background: #fff;
-      border-radius: 10px;
-      padding: 20px;
-      text-align: center;
-      border: 1px solid #eee;
-    }
-    .stat-card h2 { font-size: 32px; color: #000; }
-    .stat-card p { font-size: 13px; color: #888; margin-top: 4px; }
-
-    .card {
-      background: #fff;
-      border-radius: 10px;
-      padding: 20px;
-      border: 1px solid #eee;
-      margin-bottom: 24px;
-    }
-    .card h3 {
-      font-size: 16px;
-      margin-bottom: 16px;
-      color: #000;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 10px;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 13px; color: #555; font-weight: 500; }
-    .form-group input, .form-group select {
-      padding: 10px 12px;
-      border: 1px solid #ddd;
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
       border-radius: 8px;
-      font-size: 14px;
-      outline: none;
-    }
-    .form-group input:focus, .form-group select:focus {
-      border-color: #FFD700;
-    }
-
-    .btn {
-      padding: 10px 24px;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
+      font-size: 13px;
       font-weight: 500;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateX(100px);
+      transition: all 0.3s ease;
+      max-width: 300px;
     }
-    .btn-primary { background: #000; color: #FFD700; }
-    .btn-primary:hover { background: #222; }
-
-    table { width: 100%; border-collapse: collapse; font-size: 14px; }
-    th {
-      text-align: left;
-      padding: 10px 12px;
-      background: #f9f9f9;
-      color: #555;
-      font-size: 12px;
-      text-transform: uppercase;
+    .toast.show {
+      opacity: 1;
+      transform: translateX(0);
     }
-    td { padding: 12px; border-bottom: 1px solid #f0f0f0; color: #333; }
-    tr:last-child td { border-bottom: none; }
-
-    .badge {
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 500;
+    .toast.success {
+      background: #0a2a0a;
+      color: #4CAF50;
+      border: 0.5px solid #4CAF50;
     }
-    .badge-gold { background: #FFF8E1; color: #F57F17; }
-    .badge-silver { background: #F5F5F5; color: #616161; }
-    .badge-bronze { background: #FBE9E7; color: #BF360C; }
-
-    .download-btn {
-      padding: 6px 14px;
-      background: #000;
-      color: #FFD700;
-      border: none;
-      border-radius: 6px;
-      font-size: 12px;
-      cursor: pointer;
+    .toast.error {
+      background: #2a0000;
+      color: #ff4444;
+      border: 0.5px solid #ff4444;
     }
-
-    .loading {
-      text-align: center;
-      padding: 20px;
-      color: #888;
-      font-size: 14px;
+    .toast.info {
+      background: #0a1a2a;
+      color: #4a9eff;
+      border: 0.5px solid #4a9eff;
     }
   </style>
 </head>
 <body>
 
-  <div class="navbar">
-    <h1>WalletPass Admin</h1>
-    <span>Welcome, Staff</span>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <h1>WalletPass</h1>
+      <p>Admin Panel</p>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="/">Dashboard</a>
+      <a class="nav-item" href="/issue">Issue Card</a>
+      <a class="nav-item" href="/members-page">Members</a>
+    </nav>
+    <div class="sidebar-footer">WalletPass v1.0</div>
   </div>
 
-  <div class="container">
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <h2>Dashboard</h2>
+      </div>
+<span class="staff-badge">Welcome, Staff</span>
+<button onclick="logout()" style="padding:6px 14px;background:#2a0000;color:#ff4444;border:0.5px solid #ff4444;border-radius:20px;font-size:12px;cursor:pointer;">Logout</button>    </div>
 
-    <!-- Stats -->
-    <div class="stats">
+    <!-- STATS -->
+    <div class="stats-grid">
       <div class="stat-card">
-        <h2 id="totalCards">0</h2>
-        <p>Total Cards Issued</p>
+        <div class="stat-label">Total Cards</div>
+        <div class="stat-value" id="totalCards">0</div>
       </div>
       <div class="stat-card">
-        <h2 id="totalGold">0</h2>
-        <p>Gold Members</p>
+        <div class="stat-label">Gold Members</div>
+        <div class="stat-value" id="totalGold">0</div>
       </div>
       <div class="stat-card">
-        <h2 id="totalSilver">0</h2>
-        <p>Silver Members</p>
+        <div class="stat-label">Silver Members</div>
+        <div class="stat-value" id="totalSilver">0</div>
       </div>
     </div>
 
-    <!-- Issue New Card -->
-    <div class="card">
-      <h3>Issue New Card</h3>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Customer Name</label>
-          <input type="text" id="customerName" placeholder="e.g. John Adeyemi" />
-        </div>
-        <div class="form-group">
-          <label>Member ID</label>
-          <input type="text" id="memberId" placeholder="e.g. MEMBER002" />
-        </div>
-        <div class="form-group">
-          <label>Points</label>
-          <input type="number" id="points" placeholder="e.g. 500" />
-        </div>
-        <div class="form-group">
-          <label>Loyalty Status</label>
-          <select id="loyaltyStatus">
-            <option value="Bronze Member">Bronze Member</option>
-            <option value="Silver Member">Silver Member</option>
-            <option value="Gold Member">Gold Member</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Expiry Date</label>
-          <input type="text" id="expiryDate" placeholder="e.g. 12/2026" />
-        </div>
-        <div class="form-group">
-          <label>Business Name</label>
-          <input type="text" id="businessName" placeholder="e.g. LoyaltyPass Co." />
-        </div>
-      </div>
-    <button class="btn btn-primary" onclick="issueCard()">Issue Card</button>
-<p id="issueMessage" style="margin-top:10px;font-size:13px;color:green;"></p>
-
-<div id="shareOptions" style="display:none;margin-top:16px;padding:16px;background:#f9f9f9;border-radius:8px;border:1px solid #eee;">
-  <p style="font-size:13px;font-weight:500;margin-bottom:10px;color:#333;">Share card with customer:</p>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;">
-    <button class="btn" id="whatsappBtn" style="background:#25D366;color:#fff;display:flex;align-items:center;gap:6px;" onclick="shareWhatsApp()">
-      WhatsApp
-    </button>
-    <button class="btn" id="emailBtn" style="background:#0072C6;color:#fff;display:flex;align-items:center;gap:6px;" onclick="shareEmail()">
-      Email
-    </button>
-    <button class="btn" style="background:#f0f0f0;color:#333;" onclick="copyLink()">
-      Copy Link
-    </button>
-  </div>
-  <p id="cardLink" style="font-size:11px;color:#888;margin-top:10px;word-break:break-all;"></p>
-</div>
+    <!-- QUICK LINKS -->
+    <div class="quick-links">
+      <a class="quick-card" href="/issue">
+        <h3>Issue New Card</h3>
+        <p>Create and send a new loyalty card to a customer</p>
+      </a>
+      <a class="quick-card" href="/members-page">
+        <h3>View All Members</h3>
+        <p>See all members, update points and manage cards</p>
+      </a>
     </div>
 
-    <!-- Members Table -->
-    <div class="card">
-      <h3>All Members</h3>
-      <div style="margin-bottom:16px;">
-        <input type="text" id="searchInput" placeholder="Search by name or member ID..." 
-        oninput="searchMembers()" 
-        style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;outline:none;"/>
-      </div>
-      <div id="loadingMsg" class="loading">Loading members...</div>
-      <table id="membersTableWrapper" style="display:none;">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Member ID</th>
-            <th>Points</th>
-            <th>Status</th>
-            <th>Expires</th>
-            <th>Card</th>
-          </tr>
-        </thead>
-        <tbody id="membersTable"></tbody>
-      </table>
+    <!-- RECENT MEMBERS -->
+    <div class="recent-card">
+      <div class="card-title">Recent Members</div>
+      <div id="loadingMsg" style="font-size:13px;color:#444;">Loading...</div>
+      <div id="recentList"></div>
     </div>
 
   </div>
 
   <script>
-    async function loadMembers() {
+    function logout() {
+  if (confirm('Are you sure you want to logout?')) {
+    window.location.href = '/login';
+  }
+}
+    function showToast(message, type = 'success') {
+      const existing = document.querySelector('.toast');
+      if (existing) existing.remove();
+      
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    async function loadDashboard() {
       try {
         const response = await fetch('/members');
         const members = await response.json();
 
-        const tbody = document.getElementById('membersTable');
-        tbody.innerHTML = '';
-
-        let goldCount = 0;
-        let silverCount = 0;
-
-        members.forEach(member => {
-          const badgeClass = member.loyaltyStatus === 'Gold Member' ? 'badge-gold' :
-                            member.loyaltyStatus === 'Silver Member' ? 'badge-silver' : 'badge-bronze';
-          if (member.loyaltyStatus === 'Gold Member') goldCount++;
-          if (member.loyaltyStatus === 'Silver Member') silverCount++;
-
-          const row = `<tr>
-            <td>${member.name}</td>
-            <td>${member.memberId}</td>
-            <td>${parseInt(member.points).toLocaleString()}</td>
-            <td><span class="badge ${badgeClass}">${member.loyaltyStatus}</span></td>
-            <td>${member.expiryDate}</td>
-<td>
-  <button class="download-btn" onclick="downloadCard('${member.memberId}')">Apple</button>
-  <button class="download-btn" style="background:#4285F4;color:#fff;margin-left:6px;" onclick="googleWalletCard('${member.memberId}')">Google</button>
-<button class="download-btn" style="background:#FFD700;color:#000;margin-left:6px;" onclick="updateMember('${member.id}', ${member.points}, '${member.loyaltyStatus}')">Update</button>
-<button class="download-btn" style="background:#ff4444;color:#fff;margin-left:6px;" onclick="deleteMember('${member.id}', '${member.name}')">Delete</button></td>         </tr>`;
-          tbody.innerHTML += row;
+        let goldCount = 0, silverCount = 0;
+        members.forEach(m => {
+          if (m.loyaltyStatus === 'Gold Member') goldCount++;
+          if (m.loyaltyStatus === 'Silver Member') silverCount++;
         });
 
         document.getElementById('totalCards').textContent = members.length;
         document.getElementById('totalGold').textContent = goldCount;
         document.getElementById('totalSilver').textContent = silverCount;
         document.getElementById('loadingMsg').style.display = 'none';
-        document.getElementById('membersTableWrapper').style.display = 'table';
 
-      } catch (error) {
-        document.getElementById('loadingMsg').textContent = 'Error loading members!';
-        console.error(error);
-      }
-    }
-let currentMemberId = '';
-let currentMemberName = '';
-
-function shareWhatsApp() {
-  const link = `https://walletpass-dp2j.onrender.com/card/google?id=${currentMemberId}`;
-  const message = `Hi ${currentMemberName}! Your loyalty card is ready. Click the link below to add it to your Google Wallet: ${link}`;
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, '_blank');
-}
-
-function shareEmail() {
-  const link = `https://walletpass-dp2j.onrender.com/card/google?id=${currentMemberId}`;
-  const subject = `Your Loyalty Card is Ready!`;
-  const body = `Hi ${currentMemberName}!\n\nYour loyalty card is ready. Click the link below to add it to your Google Wallet:\n\n${link}\n\nThank you!`;
-  window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-}
-
-function copyLink() {
-  const link = `https://walletpass-dp2j.onrender.com/card/google?id=${currentMemberId}`;
-  navigator.clipboard.writeText(link);
-  document.getElementById('cardLink').textContent = 'Link copied! ' + link;
-}
-    async function issueCard() {
-      const name = document.getElementById('customerName').value;
-      const memberId = document.getElementById('memberId').value;
-      const points = document.getElementById('points').value;
-      const loyaltyStatus = document.getElementById('loyaltyStatus').value;
-      const expiryDate = document.getElementById('expiryDate').value;
-      const businessName = document.getElementById('businessName').value;
-
-      if (!name || !memberId || !points || !expiryDate || !businessName) {
-        document.getElementById('issueMessage').style.color = 'red';
-        document.getElementById('issueMessage').textContent = 'Please fill in all fields!';
-        return;
-      }
-
-      try {
-        const response = await fetch('/members/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, memberId, points: parseInt(points), loyaltyStatus, expiryDate, businessName })
+        const recentList = document.getElementById('recentList');
+        const recent = members.slice(-5).reverse();
+        recent.forEach(member => {
+          const badgeClass = member.loyaltyStatus === 'Gold Member' ? 'badge-gold' :
+                            member.loyaltyStatus === 'Silver Member' ? 'badge-silver' : 'badge-bronze';
+          recentList.innerHTML += `
+            <div class="member-row">
+              <div>
+                <div class="member-name">${member.name}</div>
+                <div class="member-id">${member.memberId}</div>
+              </div>
+              <span class="badge ${badgeClass}">${member.loyaltyStatus}</span>
+            </div>`;
         });
-
-        const result = await response.json();
-
-       if (result.success) {
-          currentMemberId = memberId;
-          currentMemberName = name;
-          document.getElementById('issueMessage').style.color = 'green';
-          document.getElementById('issueMessage').textContent = `Card issued successfully for ${name}!`;
-          document.getElementById('shareOptions').style.display = 'block';
-          document.getElementById('cardLink').textContent = `Card link: https://walletpass-dp2j.onrender.com/card/google?id=${memberId}`;
-          document.getElementById('customerName').value = '';
-          document.getElementById('memberId').value = '';
-          document.getElementById('points').value = '';
-          document.getElementById('expiryDate').value = '';
-          document.getElementById('businessName').value = '';
-          loadMembers();
-        }
       } catch (error) {
-        document.getElementById('issueMessage').style.color = 'red';
-        document.getElementById('issueMessage').textContent = 'Error issuing card!';
-        console.error(error);
+        document.getElementById('loadingMsg').textContent = 'Error loading data!';
       }
     }
 
-   function downloadCard(memberId) {
-      window.open(`/card/download?id=${memberId}`, '_blank');
-    }
-    function googleWalletCard(memberId) {
-  window.open(`/card/google?id=${memberId}`, '_blank');
-}
-
-    async function updateMember(memberId, currentPoints, currentStatus) {
-      const newPoints = prompt('Enter new points:', currentPoints);
-      if (newPoints === null) return;
-
-      const newStatus = prompt('Enter new status (Bronze Member, Silver Member, Gold Member):', currentStatus);
-      if (newStatus === null) return;
-
-      try {
-        const response = await fetch('/members/update', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            memberId: memberId,
-            updatedData: {
-              points: parseInt(newPoints),
-              loyaltyStatus: newStatus
-            }
-          })
-        });
-
-        const result = await response.json();
-        if (result.success) {
-          alert('Member updated successfully!');
-          loadMembers();
-        }
-      } catch (error) {
-        alert('Error updating member!');
-        console.error(error);
-      }
-    }
-
-    loadMembers();
-      async function deleteMember(memberId, memberName) {
-      if (!confirm(`Are you sure you want to delete ${memberName}?`)) return;
-
-      try {
-        const response = await fetch('/members/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ memberId })
-        });
-
-        const result = await response.json();
-        if (result.success) {
-          alert(`${memberName} has been deleted!`);
-          loadMembers();
-        }
-      } catch (error) {
-        alert('Error deleting member!');
-        console.error(error);
-      }
-    }
-    function searchMembers() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const rows = document.querySelectorAll('#membersTable tr');
-      
-      rows.forEach(row => {
-        const name = row.cells[0]?.textContent.toLowerCase() || '';
-        const memberId = row.cells[1]?.textContent.toLowerCase() || '';
-        
-        if (name.includes(searchTerm) || memberId.includes(searchTerm)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    }
+    loadDashboard();
   </script>
-
-
 </body>
 </html>

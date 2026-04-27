@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletPass — Members</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #111; color: #fff; display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 220px; background: #000; border-right: 0.5px solid #222;
+      display: flex; flex-direction: column; position: fixed;
+      top: 0; left: 0; height: 100vh; z-index: 100; transition: transform 0.3s;
+    }
+    .sidebar-logo { padding: 24px 20px; border-bottom: 0.5px solid #1a1a1a; }
+    .sidebar-logo h1 { font-size: 18px; color: #FFD700; font-weight: 700; }
+    .sidebar-logo p { font-size: 11px; color: #444; margin-top: 2px; }
+    .sidebar-nav { padding: 16px 10px; flex: 1; }
+    .nav-item {
+      padding: 10px 14px; border-radius: 8px; margin-bottom: 4px;
+      cursor: pointer; font-size: 13px; color: #555;
+      transition: all 0.2s; display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: #1a1a1a; color: #fff; }
+    .nav-item.active { background: #FFD700; color: #000; font-weight: 500; }
+    .sidebar-footer { padding: 16px 20px; border-top: 0.5px solid #1a1a1a; font-size: 11px; color: #333; }
+    .main { margin-left: 220px; flex: 1; padding: 24px; min-height: 100vh; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .topbar h2 { font-size: 20px; color: #FFD700; font-weight: 500; }
+    .staff-badge { font-size: 12px; color: #555; background: #1a1a1a; padding: 6px 14px; border-radius: 20px; border: 0.5px solid #222; }
+    .hamburger { display: none; background: none; border: none; color: #FFD700; font-size: 22px; cursor: pointer; }
+    .card { background: #000; border: 0.5px solid #222; border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+    .card-title { font-size: 14px; font-weight: 500; color: #FFD700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 0.5px solid #1a1a1a; }
+    .search-input {
+      width: 100%; padding: 10px 14px; background: #111; border: 0.5px solid #333;
+      border-radius: 8px; font-size: 13px; color: #fff; outline: none; margin-bottom: 16px;
+    }
+    .search-input:focus { border-color: #FFD700; }
+    .search-input::placeholder { color: #444; }
+    .table-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 10px 12px; background: #111; color: #555; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    td { padding: 12px; border-bottom: 0.5px solid #1a1a1a; color: #ccc; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #0a0a0a; }
+    .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+    .badge-gold { background: #2a2000; color: #FFD700; border: 0.5px solid #FFD700; }
+    .badge-silver { background: #1a1a1a; color: #aaa; border: 0.5px solid #444; }
+    .badge-bronze { background: #1a0f00; color: #cd7f32; border: 0.5px solid #cd7f32; }
+    .action-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .act-btn { padding: 5px 10px; border: none; border-radius: 6px; font-size: 11px; font-weight: 500; cursor: pointer; }
+    .act-apple { background: #1a1a1a; color: #fff; border: 0.5px solid #333; }
+    .act-google { background: #1a2a1a; color: #4CAF50; border: 0.5px solid #4CAF50; }
+    .act-update { background: #2a2000; color: #FFD700; border: 0.5px solid #FFD700; }
+    .act-delete { background: #2a0000; color: #ff4444; border: 0.5px solid #ff4444; }
+    .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99; }
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .overlay.show { display: block; }
+      .main { margin-left: 0; padding: 16px; }
+      .hamburger { display: block; }
+      .act-btn { padding: 4px 8px; font-size: 10px; }
+    }
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 9999;
+      opacity: 0;
+      transform: translateX(100px);
+      transition: all 0.3s ease;
+      max-width: 300px;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .toast.success {
+      background: #0a2a0a;
+      color: #4CAF50;
+      border: 0.5px solid #4CAF50;
+    }
+    .toast.error {
+      background: #2a0000;
+      color: #ff4444;
+      border: 0.5px solid #ff4444;
+    }
+    .toast.info {
+      background: #0a1a2a;
+      color: #4a9eff;
+      border: 0.5px solid #4a9eff;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <h1>WalletPass</h1>
+      <p>Admin Panel</p>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="/">Dashboard</a>
+      <a class="nav-item" href="/issue">Issue Card</a>
+      <a class="nav-item active" href="/members-page">Members</a>
+    </nav>
+    <div class="sidebar-footer">WalletPass v1.0</div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="hamburger" onclick="openSidebar()">☰</button>
+        <h2>All Members</h2>
+      </div>
+<span class="staff-badge">Welcome, Staff</span>
+<button onclick="logout()" style="padding:6px 14px;background:#2a0000;color:#ff4444;border:0.5px solid #ff4444;border-radius:20px;font-size:12px;cursor:pointer;">Logout</button>    </div>
+
+    <div class="card">
+<div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+  <span>Members List</span>
+  <button onclick="exportCSV()" style="padding:6px 16px;background:#2a2000;color:#FFD700;border:0.5px solid #FFD700;border-radius:8px;font-size:12px;cursor:pointer;font-weight:500;">Export CSV</button>
+</div>      <input type="text" class="search-input" id="searchInput" placeholder="Search by name or member ID..." oninput="searchMembers()" />
+      <div id="loadingMsg" style="font-size:13px;color:#444;padding:10px 0;">Loading members...</div>
+      <div class="table-wrapper">
+        <table id="membersTableWrapper" style="display:none;">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Member ID</th>
+              <th>Points</th>
+              <th>Status</th>
+              <th>Expires</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="membersTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+function exportCSV() {
+      const rows = document.querySelectorAll('#membersTable tr');
+      if (rows.length === 0) {
+        showToast('No members to export!', 'error');
+        return;
+      }
+
+      let csv = 'Name,Member ID,Points,Status,Expiry Date\n';
+      rows.forEach(row => {
+        if (row.style.display === 'none') return;
+        const cells = row.querySelectorAll('td');
+        if (cells.length > 0) {
+          const name = cells[0].textContent.trim();
+          const memberId = cells[1].textContent.trim();
+          const points = cells[2].textContent.trim();
+          const status = cells[3].textContent.trim();
+          const expiry = cells[4].textContent.trim();
+          csv += `"${name}","${memberId}","${points}","${status}","${expiry}"\n`;
+        }
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'walletpass-members.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Members exported successfully!');
+    }
+
+    function logout() {
+  if (confirm('Are you sure you want to logout?')) {
+    window.location.href = '/login';
+  }
+}
+    function showToast(message, type = 'success') {
+      const existing = document.querySelector('.toast');
+      if (existing) existing.remove();
+      
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    async function loadMembers() {
+      try {
+        const response = await fetch('/members');
+        const members = await response.json();
+        const tbody = document.getElementById('membersTable');
+        tbody.innerHTML = '';
+
+        members.forEach(member => {
+          const badgeClass = member.loyaltyStatus === 'Gold Member' ? 'badge-gold' :
+                            member.loyaltyStatus === 'Silver Member' ? 'badge-silver' : 'badge-bronze';
+          const row = `<tr>
+            <td>${member.name}</td>
+            <td>${member.memberId}</td>
+            <td>${parseInt(member.points).toLocaleString()}</td>
+            <td><span class="badge ${badgeClass}">${member.loyaltyStatus}</span></td>
+            <td>${member.expiryDate}</td>
+            <td>
+              <div class="action-btns">
+                <button class="act-btn act-apple" onclick="downloadCard('${member.memberId}')">Apple</button>
+                <button class="act-btn act-google" onclick="googleWalletCard('${member.memberId}')">Google</button>
+                <button class="act-btn act-update" onclick="updateMember('${member.id}', ${member.points}, '${member.loyaltyStatus}')">Update</button>
+                <button class="act-btn act-delete" onclick="deleteMember('${member.id}', '${member.name}')">Delete</button>
+              </div>
+            </td>
+          </tr>`;
+          tbody.innerHTML += row;
+        });
+
+        document.getElementById('loadingMsg').style.display = 'none';
+        document.getElementById('membersTableWrapper').style.display = 'table';
+      } catch (error) {
+        document.getElementById('loadingMsg').textContent = 'Error loading members!';
+      }
+    }
+
+    function searchMembers() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const rows = document.querySelectorAll('#membersTable tr');
+      rows.forEach(row => {
+        const name = row.cells[0]?.textContent.toLowerCase() || '';
+        const memberId = row.cells[1]?.textContent.toLowerCase() || '';
+        row.style.display = (name.includes(searchTerm) || memberId.includes(searchTerm)) ? '' : 'none';
+      });
+    }
+
+    function downloadCard(memberId) { window.open(`/card/download?id=${memberId}`, '_blank'); }
+    function googleWalletCard(memberId) { window.open(`/card/google?id=${memberId}`, '_blank'); }
+
+    async function updateMember(memberId, currentPoints, currentStatus) {
+      const newPoints = prompt('Enter new points:', currentPoints);
+      if (newPoints === null) return;
+      const newStatus = prompt('Enter new status (Bronze Member, Silver Member, Gold Member):', currentStatus);
+      if (newStatus === null) return;
+      try {
+        const response = await fetch('/members/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ memberId, updatedData: { points: parseInt(newPoints), loyaltyStatus: newStatus } })
+        });
+        const result = await response.json();
+if (result.success) { showToast('Member updated successfully!'); loadMembers(); }      
+} catch (error) { showToast('Error updating member!', 'error'); }    }
+
+    async function deleteMember(memberId, memberName) {
+      if (!confirm(`Delete ${memberName}?`)) return;
+      try {
+        const response = await fetch('/members/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ memberId })
+        });
+        const result = await response.json();
+        if (result.success) { showToast(`${memberName} deleted!`, 'info'); loadMembers(); }
+} catch (error) { showToast('Error deleting member!', 'error'); }    }
+
+    loadMembers();
+  </script>
+</body>
+</html>
