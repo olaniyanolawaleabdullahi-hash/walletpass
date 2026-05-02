@@ -6,89 +6,171 @@
   <title>WalletPass — Settings</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #111; color: #fff; display: flex; min-height: 100vh; }
-    .sidebar { width: 220px; background: #000; border-right: 0.5px solid #222; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; transition: transform 0.3s; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Arial, sans-serif; background: #0a0a0a; color: #fff; display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: 220px; background: #000; border-right: 0.5px solid #1a1a1a; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 100; transition: transform 0.3s; }
     .sidebar-logo { padding: 24px 20px; border-bottom: 0.5px solid #1a1a1a; }
-    .sidebar-logo h1 { font-size: 18px; color: #FFD700; font-weight: 700; }
-    .sidebar-logo p { font-size: 11px; color: #444; margin-top: 2px; }
+    .sidebar-logo h1 { font-size: 18px; color: #FFD700; font-weight: 700; letter-spacing: -0.5px; }
+    .sidebar-logo p { font-size: 11px; color: #333; margin-top: 3px; }
     .sidebar-nav { padding: 16px 10px; flex: 1; }
-    .nav-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 4px; cursor: pointer; font-size: 13px; color: #555; transition: all 0.2s; display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-item:hover { background: #1a1a1a; color: #fff; }
-    .nav-item.active { background: #FFD700; color: #000; font-weight: 500; }
-    .sidebar-footer { padding: 16px 20px; border-top: 0.5px solid #1a1a1a; font-size: 11px; color: #333; }
-    .main { margin-left: 220px; flex: 1; padding: 24px; min-height: 100vh; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .topbar h2 { font-size: 20px; color: #FFD700; font-weight: 500; }
+    .nav-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 3px; cursor: pointer; font-size: 13px; color: #444; transition: all 0.2s; display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-item:hover { background: #111; color: #fff; }
+    .nav-item.active { background: #FFD700; color: #000; font-weight: 600; }
+    .sidebar-footer { padding: 16px 20px; border-top: 0.5px solid #1a1a1a; font-size: 11px; color: #222; }
+
+    /* MAIN */
+    .main { margin-left: 220px; flex: 1; padding: 32px; min-height: 100vh; background: #0a0a0a; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+    .topbar-left h2 { font-size: 24px; color: #FFD700; font-weight: 700; letter-spacing: -0.5px; }
+    .topbar-left p { font-size: 13px; color: #444; margin-top: 4px; }
     .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .staff-badge { font-size: 12px; color: #555; background: #1a1a1a; padding: 6px 14px; border-radius: 20px; border: 0.5px solid #222; }
-    .logout-btn { padding: 6px 14px; background: #2a0000; color: #ff4444; border: 0.5px solid #ff4444; border-radius: 20px; font-size: 12px; cursor: pointer; }
+    .staff-badge { font-size: 12px; color: #444; background: #111; padding: 8px 16px; border-radius: 20px; border: 0.5px solid #1a1a1a; }
+    .logout-btn { padding: 8px 16px; background: transparent; color: #ff4444; border: 0.5px solid #ff4444; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.2s; }
+    .logout-btn:hover { background: #2a0000; }
     .hamburger { display: none; background: none; border: none; color: #FFD700; font-size: 22px; cursor: pointer; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; margin-bottom: 28px; background: #111; padding: 4px; border-radius: 10px; width: fit-content; border: 0.5px solid #1a1a1a; }
+    .tab { padding: 8px 20px; border-radius: 8px; font-size: 13px; color: #444; cursor: pointer; transition: all 0.2s; }
+    .tab.active { background: #FFD700; color: #000; font-weight: 600; }
+
+    /* CONTENT GRID */
     .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .card { background: #000; border: 0.5px solid #222; border-radius: 12px; padding: 20px; }
-    .card-title { font-size: 14px; font-weight: 500; color: #FFD700; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 0.5px solid #1a1a1a; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-    .form-group label { font-size: 12px; color: #555; }
-    .form-group input, .form-group select {
-      padding: 10px 12px; background: #111; border: 0.5px solid #333;
-      border-radius: 8px; font-size: 13px; color: #fff; outline: none;
+
+    /* CARDS */
+    .card { background: #111; border: 0.5px solid #1a1a1a; border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+    .card-title { font-size: 13px; font-weight: 600; color: #FFD700; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 0.5px solid #1a1a1a; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* FORM */
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .form-group label { font-size: 12px; color: #555; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+    .form-group input, .form-group select, .form-group textarea {
+      padding: 12px 14px; background: #0a0a0a; border: 0.5px solid #222;
+      border-radius: 10px; font-size: 14px; color: #fff; outline: none; transition: border-color 0.2s;
     }
     .form-group input:focus, .form-group select:focus { border-color: #FFD700; }
     .form-group select option { background: #111; }
+    .form-group textarea { resize: vertical; min-height: 80px; }
     .color-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .color-input-wrap { display: flex; align-items: center; gap: 10px; }
-    .color-input-wrap input[type="color"] {
-      width: 40px; height: 36px; border: 0.5px solid #333;
-      border-radius: 8px; background: #111; cursor: pointer; padding: 2px;
-    }
-    .color-input-wrap input[type="text"] { flex: 1; }
-    .btn-primary { width: 100%; padding: 12px; background: #FFD700; color: #000; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; }
-    .btn-primary:hover { background: #FFC800; }
+    .color-wrap { display: flex; align-items: center; gap: 10px; background: #0a0a0a; border: 0.5px solid #222; border-radius: 10px; padding: 6px 10px; }
+    .color-wrap input[type="color"] { width: 32px; height: 32px; border: none; border-radius: 6px; background: none; cursor: pointer; padding: 0; }
+    .color-wrap input[type="text"] { flex: 1; background: none; border: none; color: #fff; font-size: 13px; outline: none; }
+    .btn-primary { width: 100%; padding: 14px; background: #FFD700; color: #000; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; }
+    .btn-primary:hover { background: #FFC800; transform: translateY(-1px); }
+    .btn-secondary { width: 100%; padding: 12px; background: transparent; color: #FFD700; border: 0.5px solid #FFD700; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+    .btn-secondary:hover { background: #1a1500; }
 
-    /* CARD PREVIEW */
-    .preview-label { font-size: 11px; color: #555; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 12px; }
-    .wallet-card-preview {
-      border-radius: 16px; padding: 20px; position: relative;
-      overflow: hidden; min-height: 200px; transition: all 0.3s;
+    /* IPHONE WALLET CARD */
+    .phone-frame {
+      width: 260px; margin: 0 auto;
+      background: #1c1c1e;
+      border-radius: 40px;
+      padding: 16px;
+      border: 2px solid #2a2a2a;
+      box-shadow: 0 0 0 1px #000, 0 20px 60px rgba(0,0,0,0.8);
     }
-    .wallet-card-preview::before {
-      content: ''; position: absolute; top: -30px; right: -30px;
-      width: 120px; height: 120px; border-radius: 50%;
-      background: rgba(255,255,255,0.05);
+    .phone-notch {
+      width: 80px; height: 20px;
+      background: #1c1c1e;
+      border-radius: 0 0 14px 14px;
+      margin: 0 auto 12px;
+      border: 2px solid #2a2a2a;
+      border-top: none;
     }
-    .preview-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-    .preview-business { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
-    .preview-points-wrap { text-align: right; }
-    .preview-points-label { font-size: 9px; opacity: 0.6; margin-bottom: 2px; }
-    .preview-points { font-size: 22px; font-weight: 700; }
-    .preview-name { font-size: 16px; font-weight: 500; margin-bottom: 14px; }
-    .preview-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
-    .preview-fields { display: flex; flex-direction: column; gap: 8px; }
-    .preview-field-label { font-size: 9px; opacity: 0.5; margin-bottom: 1px; }
-    .preview-field-value { font-size: 12px; opacity: 0.9; }
-    .preview-qr {
-      width: 56px; height: 56px; background: #fff;
-      border-radius: 6px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 2px; padding: 6px;
+    .phone-screen {
+      background: #000;
+      border-radius: 26px;
+      overflow: hidden;
+      min-height: 420px;
+      padding: 16px 12px;
     }
-    .qr-row { display: flex; gap: 2px; }
-    .qr-cell { width: 6px; height: 6px; border-radius: 1px; }
+    .wallet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+    .wallet-title { font-size: 11px; font-weight: 700; color: #fff; }
+    .wallet-done { font-size: 11px; color: #0a84ff; font-weight: 600; }
 
-    /* CARD TIERS */
-    .tiers-section { margin-top: 20px; }
-    .tier-card { background: #111; border: 0.5px solid #222; border-radius: 10px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .tier-name { font-size: 13px; font-weight: 500; }
-    .tier-badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-    .tier-gold { background: #2a2000; color: #FFD700; border: 0.5px solid #FFD700; }
-    .tier-silver { background: #1a1a1a; color: #aaa; border: 0.5px solid #444; }
-    .tier-bronze { background: #1a0f00; color: #cd7f32; border: 0.5px solid #cd7f32; }
-    .tier-edit-btn { padding: 5px 12px; background: #1a1a1a; color: #FFD700; border: 0.5px solid #333; border-radius: 6px; font-size: 11px; cursor: pointer; }
+    /* THE ACTUAL WALLET CARD */
+    .wallet-card {
+      border-radius: 16px;
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      min-height: 200px;
+    }
+    .wallet-card::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+    }
+    .wallet-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: -20px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+    }
+    .wc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; position: relative; z-index: 1; }
+    .wc-logo { font-size: 13px; font-weight: 800; letter-spacing: -0.5px; }
+    .wc-type { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; margin-top: 2px; }
+    .wc-points-wrap { text-align: right; }
+    .wc-points-label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; margin-bottom: 2px; }
+    .wc-points { font-size: 24px; font-weight: 800; letter-spacing: -1px; }
+    .wc-name { font-size: 15px; font-weight: 600; margin-bottom: 16px; position: relative; z-index: 1; letter-spacing: -0.3px; }
+.wc-bottom { display: flex; justify-content: space-between; align-items: flex-end; position: relative; z-index: 1; margin-top: 16px; padding-top: 12px; border-top: 0.5px solid rgba(255,255,255,0.1); }    .wc-fields { display: flex; gap: 20px; }
+    .wc-field-label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.5; margin-bottom: 3px; }
+    .wc-field-value { font-size: 11px; font-weight: 600; }
+    .wc-qr {
+      width: 50px; height: 50px;
+      background: #fff;
+      border-radius: 6px;
+      padding: 5px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5px;
+    }
+    .wc-qr-cell { border-radius: 1px; }
+
+    /* TIER CARDS */
+    .tier-item {
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      border: 0.5px solid #222;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .tier-item:hover { border-color: #333; transform: translateY(-1px); }
+    .tier-item.active-tier { border-color: #FFD700; }
+    .tier-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .tier-name { font-size: 14px; font-weight: 600; }
+    .tier-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .tier-perks { font-size: 12px; color: #444; line-height: 1.6; }
+    .tier-edit-btn { padding: 6px 14px; background: #1a1a1a; border: 0.5px solid #333; border-radius: 8px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+
+    /* TIER EDIT MODAL */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; justify-content: center; align-items: center; }
+    .modal.show { display: flex; }
+    .modal-inner { background: #111; border: 0.5px solid #222; border-radius: 20px; padding: 28px; width: 100%; max-width: 420px; position: relative; }
+    .modal-title { font-size: 16px; font-weight: 700; color: #FFD700; margin-bottom: 20px; }
+    .modal-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: #444; font-size: 20px; cursor: pointer; }
 
     /* TOAST */
-    .toast { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; z-index: 9999; opacity: 0; transform: translateX(100px); transition: all 0.3s ease; max-width: 300px; }
+    .toast { position: fixed; top: 24px; right: 24px; padding: 14px 20px; border-radius: 12px; font-size: 13px; font-weight: 500; z-index: 9999; opacity: 0; transform: translateX(120px); transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); max-width: 320px; backdrop-filter: blur(10px); }
     .toast.show { opacity: 1; transform: translateX(0); }
-    .toast.success { background: #0a2a0a; color: #4CAF50; border: 0.5px solid #4CAF50; }
-    .toast.error { background: #2a0000; color: #ff4444; border: 0.5px solid #ff4444; }
+    .toast.success { background: rgba(10,42,10,0.95); color: #4CAF50; border: 0.5px solid #4CAF50; }
+    .toast.error { background: rgba(42,0,0,0.95); color: #ff4444; border: 0.5px solid #ff4444; }
+    .toast.info { background: rgba(0,20,42,0.95); color: #4a9eff; border: 0.5px solid #4a9eff; }
 
     .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99; }
 
@@ -100,12 +182,49 @@
       .hamburger { display: block; }
       .content-grid { grid-template-columns: 1fr; }
       .color-row { grid-template-columns: 1fr; }
+      .phone-frame { width: 220px; }
+      .topbar-left p { display: none; }
     }
   </style>
 </head>
 <body>
 
   <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- TIER EDIT MODAL -->
+  <div class="modal" id="tierModal">
+    <div class="modal-inner">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-title" id="modalTitle">Edit Gold Tier</div>
+      <div class="form-group">
+        <label>Tier Name</label>
+        <input type="text" id="modalTierName" placeholder="e.g. Gold Member" />
+      </div>
+      <div class="form-group">
+        <label>Card Background Color</label>
+        <div class="color-wrap">
+          <input type="color" id="modalBgPicker" oninput="document.getElementById('modalBg').value=this.value" />
+          <input type="text" id="modalBg" placeholder="#000000" oninput="document.getElementById('modalBgPicker').value=this.value" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Text Color</label>
+        <div class="color-wrap">
+          <input type="color" id="modalTextPicker" oninput="document.getElementById('modalText').value=this.value" />
+          <input type="text" id="modalText" placeholder="#FFD700" oninput="document.getElementById('modalTextPicker').value=this.value" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Member Perks</label>
+        <textarea id="modalPerks" placeholder="e.g. 10% discount on all purchases&#10;Free birthday reward&#10;Priority customer support"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Points Required</label>
+        <input type="number" id="modalPoints" placeholder="e.g. 1000" />
+      </div>
+      <button class="btn-primary" onclick="saveTier()">Save Tier</button>
+    </div>
+  </div>
 
   <div class="sidebar" id="sidebar">
     <div class="sidebar-logo">
@@ -123,9 +242,12 @@
 
   <div class="main">
     <div class="topbar">
-      <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:14px;">
         <button class="hamburger" onclick="openSidebar()">☰</button>
-        <h2>Settings</h2>
+        <div class="topbar-left">
+          <h2>Settings</h2>
+          <p>Customize your card design and loyalty tiers</p>
+        </div>
       </div>
       <div class="topbar-right">
         <span class="staff-badge">Welcome, Staff</span>
@@ -133,113 +255,412 @@
       </div>
     </div>
 
-    <div class="content-grid">
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('branding')">Branding</div>
+      <div class="tab" onclick="switchTab('tiers')">Loyalty Tiers</div>
+    </div>
 
-      <!-- LEFT: Settings Form -->
+    <!-- BRANDING TAB -->
+    <div id="tab-branding" class="content-grid">
       <div>
         <div class="card">
-          <div class="card-title">Business Settings</div>
-
+          <div class="card-title">Business Identity</div>
           <div class="form-group">
             <label>Business Name</label>
             <input type="text" id="businessName" placeholder="e.g. FitLife Gym" oninput="updatePreview()" />
           </div>
-
           <div class="form-group">
             <label>Card Type</label>
             <select id="cardType" onchange="updatePreview()">
               <option value="Loyalty">Loyalty Card</option>
               <option value="Membership">Membership Card</option>
-              <option value="Event">Event Ticket</option>
               <option value="Discount">Discount Card</option>
+              <option value="VIP">VIP Card</option>
             </select>
           </div>
-
           <div class="form-group">
-            <label>Logo URL (optional)</label>
-            <input type="text" id="logoUrl" placeholder="https://yourlogo.com/logo.png" oninput="updatePreview()" />
+            <label>Tagline (optional)</label>
+            <input type="text" id="tagline" placeholder="e.g. Earn rewards with every visit" oninput="updatePreview()" />
           </div>
+        </div>
 
+        <div class="card">
+          <div class="card-title">Card Colors</div>
           <div class="color-row">
             <div class="form-group">
-              <label>Card Background Color</label>
-              <div class="color-input-wrap">
+              <label>Background Color</label>
+              <div class="color-wrap">
                 <input type="color" id="bgColorPicker" value="#000000" oninput="syncColor('bg')" />
-                <input type="text" id="bgColor" value="#000000" placeholder="#000000" oninput="syncColorFromText('bg')" />
+                <input type="text" id="bgColor" value="#000000" oninput="syncColorFromText('bg')" />
               </div>
             </div>
             <div class="form-group">
-              <label>Text & Accent Color</label>
-              <div class="color-input-wrap">
+              <label>Text & Accent</label>
+              <div class="color-wrap">
                 <input type="color" id="textColorPicker" value="#FFD700" oninput="syncColor('text')" />
-                <input type="text" id="textColor" value="#FFD700" placeholder="#FFD700" oninput="syncColorFromText('text')" />
+                <input type="text" id="textColor" value="#FFD700" oninput="syncColorFromText('text')" />
               </div>
+            </div>
+          </div>
+
+          <!-- COLOR PRESETS -->
+          <div style="margin-bottom:16px;">
+            <div style="font-size:11px;color:#444;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">Quick Presets</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <div onclick="applyPreset('#000000','#FFD700')" style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#000,#222);border:2px solid #FFD700;cursor:pointer;" title="Black Gold"></div>
+              <div onclick="applyPreset('#0a0a2e','#4a9eff')" style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a0a2e,#1a1a4e);border:2px solid #4a9eff;cursor:pointer;" title="Deep Blue"></div>
+              <div onclick="applyPreset('#1a0a00','#ff6b35')" style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#1a0a00,#2a1500);border:2px solid #ff6b35;cursor:pointer;" title="Ember"></div>
+              <div onclick="applyPreset('#0a1a0a','#4CAF50')" style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#0a1a0a,#0f2a0f);border:2px solid #4CAF50;cursor:pointer;" title="Forest"></div>
+              <div onclick="applyPreset('#1a0a1a','#c77dff')" style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#1a0a1a,#2a0a2a);border:2px solid #c77dff;cursor:pointer;" title="Royal Purple"></div>
+              <div onclick="applyPreset('#fff','#000')" style="width:32px;height:32px;border-radius:8px;background:#fff;border:2px solid #ddd;cursor:pointer;" title="Clean White"></div>
             </div>
           </div>
 
           <button class="btn-primary" onclick="saveSettings()">Save Settings</button>
         </div>
+      </div>
 
-        <!-- Tier Settings -->
-        <div class="card tiers-section">
-          <div class="card-title">Loyalty Tiers</div>
-          <div class="tier-card">
-            <div>
-              <div class="tier-name">Gold Tier</div>
-              <div style="font-size:11px;color:#555;margin-top:2px;">Top level members</div>
+      <!-- RIGHT: iPhone Preview -->
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div style="font-size:11px;color:#333;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">Live Preview</div>
+        <div class="phone-frame">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="wallet-header">
+              <div class="wallet-title">Wallet</div>
+              <div class="wallet-done">Done</div>
             </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span class="tier-badge tier-gold">Gold</span>
-              <button class="tier-edit-btn" onclick="editTier('Gold')">Edit</button>
+
+            <div class="wallet-card" id="cardPreview" style="background:#000;">
+              <div class="wc-top">
+                <div>
+                  <div class="wc-logo" id="prev-business" style="color:#FFD700;">LoyaltyPass</div>
+                  <div class="wc-type" id="prev-type" style="color:#FFD700;">Loyalty Card</div>
+                </div>
+                <div class="wc-points-wrap">
+                  <div class="wc-points-label" style="color:rgba(255,215,0,0.5);">POINTS</div>
+                  <div class="wc-points" id="prev-points" style="color:#FFD700;">1,240</div>
+                </div>
+              </div>
+              <div class="wc-name" id="prev-name" style="color:#fff;">John Adeyemi</div>
+              <div class="wc-bottom">
+                <div class="wc-fields">
+                  <div>
+                    <div class="wc-field-label" id="prev-status-label" style="color:rgba(255,215,0,0.5);">STATUS</div>
+                    <div class="wc-field-value" id="prev-status" style="color:#FFD700;">Gold Member</div>
+                  </div>
+                  <div>
+                    <div class="wc-field-label" style="color:rgba(255,215,0,0.5);">EXPIRES</div>
+                    <div class="wc-field-value" style="color:#FFD700;">12/2026</div>
+                  </div>
+                </div>
+                <div class="wc-qr" id="qrCode"></div>
+              </div>
+            </div>
+
+           <div style="display:flex;justify-content:center;margin-top:12px;">
+              <div style="width:40px;height:4px;background:#333;border-radius:2px;"></div>
+            </div>
+        <div style="margin-top:16px;font-size:11px;color:#333;text-align:center;">Updates in real time as you edit</div>
+      </div>
+    </div>
+
+    <!-- TIERS TAB -->
+    <div id="tab-tiers" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div class="card">
+            <div class="card-title">Loyalty Tiers</div>
+            <p style="font-size:13px;color:#444;margin-bottom:20px;">Click Edit to customize each tier's design, perks and requirements.</p>
+
+            <!-- GOLD TIER -->
+            <div class="tier-item" id="tier-gold-item" style="background:#0f0c00;">
+              <div class="tier-top">
+                <div>
+                  <div class="tier-name" style="color:#FFD700;" id="gold-tier-name">Gold Member</div>
+                  <div style="font-size:11px;color:#665500;margin-top:2px;" id="gold-points-req">1,000+ points required</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="tier-badge" style="background:#2a2000;color:#FFD700;border:0.5px solid #FFD700;">Gold</span>
+                  <button class="tier-edit-btn" style="color:#FFD700;border-color:#FFD700;" onclick="openTierModal('gold')">Edit</button>
+                </div>
+              </div>
+              <div class="tier-perks" id="gold-perks" style="color:#665500;">
+                • 15% discount on all purchases<br>
+                • Free birthday reward<br>
+                • Priority customer support<br>
+                • Exclusive member events
+              </div>
+            </div>
+
+            <!-- SILVER TIER -->
+            <div class="tier-item" id="tier-silver-item" style="background:#0a0a0a;">
+              <div class="tier-top">
+                <div>
+                  <div class="tier-name" style="color:#C0C0C0;" id="silver-tier-name">Silver Member</div>
+                  <div style="font-size:11px;color:#444;margin-top:2px;" id="silver-points-req">500+ points required</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="tier-badge" style="background:#1a1a1a;color:#C0C0C0;border:0.5px solid #C0C0C0;">Silver</span>
+                  <button class="tier-edit-btn" style="color:#C0C0C0;border-color:#C0C0C0;" onclick="openTierModal('silver')">Edit</button>
+                </div>
+              </div>
+              <div class="tier-perks" id="silver-perks" style="color:#444;">
+                • 8% discount on all purchases<br>
+                • Monthly member rewards<br>
+                • Early access to promotions
+              </div>
+            </div>
+
+            <!-- BRONZE TIER -->
+            <div class="tier-item" id="tier-bronze-item" style="background:#0a0600;">
+              <div class="tier-top">
+                <div>
+                  <div class="tier-name" style="color:#cd7f32;" id="bronze-tier-name">Bronze Member</div>
+                  <div style="font-size:11px;color:#3d2500;margin-top:2px;" id="bronze-points-req">0+ points required</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="tier-badge" style="background:#1a0f00;color:#cd7f32;border:0.5px solid #cd7f32;">Bronze</span>
+                  <button class="tier-edit-btn" style="color:#cd7f32;border-color:#cd7f32;" onclick="openTierModal('bronze')">Edit</button>
+                </div>
+              </div>
+              <div class="tier-perks" id="bronze-perks" style="color:#3d2500;">
+                • 3% discount on all purchases<br>
+                • Access to member portal<br>
+                • Points on every purchase
+              </div>
             </div>
           </div>
-          <div class="tier-card">
+        </div>
+
+        <!-- RIGHT: Tier Card Previews -->
+        <div>
+          <div class="card">
+            <div class="card-title">Tier Card Previews</div>
+
+            <!-- Gold Preview -->
+            <div style="margin-bottom:16px;">
+              <div style="font-size:10px;color:#665500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Gold Card</div>
+              <div id="gold-card-preview" style="background:#1a1400;border-radius:12px;padding:14px;border:0.5px solid #FFD700;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#FFD700;" id="gold-preview-name">Gold Member</div>
+                    <div style="font-size:9px;color:rgba(255,215,0,0.4);">LOYALTY CARD</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:8px;color:rgba(255,215,0,0.4);">POINTS</div>
+                    <div style="font-size:18px;font-weight:800;color:#FFD700;">1,000+</div>
+                  </div>
+                </div>
+                <div style="font-size:10px;color:rgba(255,215,0,0.5);" id="gold-preview-perks">15% discount • Free birthday reward • Priority support</div>
+              </div>
+            </div>
+
+            <!-- Silver Preview -->
+            <div style="margin-bottom:16px;">
+              <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Silver Card</div>
+              <div id="silver-card-preview" style="background:#111;border-radius:12px;padding:14px;border:0.5px solid #C0C0C0;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#C0C0C0;" id="silver-preview-name">Silver Member</div>
+                    <div style="font-size:9px;color:rgba(192,192,192,0.4);">LOYALTY CARD</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:8px;color:rgba(192,192,192,0.4);">POINTS</div>
+                    <div style="font-size:18px;font-weight:800;color:#C0C0C0;">500+</div>
+                  </div>
+                </div>
+                <div style="font-size:10px;color:rgba(192,192,192,0.5);" id="silver-preview-perks">8% discount • Monthly rewards • Early access</div>
+              </div>
+            </div>
+
+            <!-- Bronze Preview -->
             <div>
-              <div class="tier-name">Silver Tier</div>
-              <div style="font-size:11px;color:#555;margin-top:2px;">Mid level members</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span class="tier-badge tier-silver">Silver</span>
-              <button class="tier-edit-btn" onclick="editTier('Silver')">Edit</button>
-            </div>
-          </div>
-          <div class="tier-card">
-            <div>
-              <div class="tier-name">Bronze Tier</div>
-              <div style="font-size:11px;color:#555;margin-top:2px;">Entry level members</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span class="tier-badge tier-bronze">Bronze</span>
-              <button class="tier-edit-btn" onclick="editTier('Bronze')">Edit</button>
+              <div style="font-size:10px;color:#3d2500;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Bronze Card</div>
+              <div id="bronze-card-preview" style="background:#0d0800;border-radius:12px;padding:14px;border:0.5px solid #cd7f32;">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+                  <div>
+                    <div style="font-size:11px;font-weight:700;color:#cd7f32;" id="bronze-preview-name">Bronze Member</div>
+                    <div style="font-size:9px;color:rgba(205,127,50,0.4);">LOYALTY CARD</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div style="font-size:8px;color:rgba(205,127,50,0.4);">POINTS</div>
+                    <div style="font-size:18px;font-weight:800;color:#cd7f32;">0+</div>
+                  </div>
+                </div>
+                <div style="font-size:10px;color:rgba(205,127,50,0.5);" id="bronze-preview-perks">3% discount • Member portal access • Points on purchases</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- RIGHT: Live Preview -->
-      <div>
-        <div class="card">
-          <div class="card-title">Live Card Preview</div>
-          <p style="font-size:12px;color:#444;margin-bottom:16px;">Updates in real time as you type</p>
+  <script>
+    let currentTier = '';
+    const tierData = {
+      gold: { name: 'Gold Member', bg: '#1a1400', text: '#FFD700', perks: '• 15% discount on all purchases\n• Free birthday reward\n• Priority customer support\n• Exclusive member events', points: 1000 },
+      silver: { name: 'Silver Member', bg: '#111', text: '#C0C0C0', perks: '• 8% discount on all purchases\n• Monthly member rewards\n• Early access to promotions', points: 500 },
+      bronze: { name: 'Bronze Member', bg: '#0d0800', text: '#cd7f32', perks: '• 3% discount on all purchases\n• Access to member portal\n• Points on every purchase', points: 0 }
+    };
 
-          <div class="wallet-card-preview" id="cardPreview" style="background:#000;border:1px solid #FFD700;">
-            <div class="preview-top">
-              <div>
-                <div class="preview-business" id="prev-type" style="color:#FFD700;">LOYALTY CARD</div>
-                <div style="font-size:10px;color:rgba(255,215,0,0.5);margin-top:2px;" id="prev-business">LoyaltyPass Co.</div>
-              </div>
-              <div class="preview-points-wrap">
-                <div class="preview-points-label" style="color:rgba(255,215,0,0.5);">POINTS</div>
-                <div class="preview-points" style="color:#FFD700;" id="prev-points">1,240</div>
-              </div>
-            </div>
-            <div class="preview-name" style="color:#fff;" id="prev-name">John Adeyemi</div>
-            <div class="preview-bottom">
-              <div class="preview-fields">
-                <div>
-                  <div class="preview-field-label" style="color:rgba(255,215,0,0.5);">STATUS</div>
-                  <div class="preview-field-value" style="color:#FFD700;" id="prev-status">Gold Member</div>
-                </div>
-                <div>
-                  <div class="preview-field-label" style="color:rgba(255,215,0,0.5);">EXPIRES</div>
-                  <div class="preview-field-value" style="color:#FFD700;"
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+    function logout() { window.location.href = '/login'; }
+
+    function showToast(message, type = 'success') {
+      const existing = document.querySelector('.toast');
+      if (existing) existing.remove();
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3500);
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('tab-branding').style.display = tab === 'branding' ? 'grid' : 'none';
+      document.getElementById('tab-tiers').style.display = tab === 'tiers' ? 'block' : 'none';
+    }
+
+    function generateQR() {
+      const qr = document.getElementById('qrCode');
+      qr.innerHTML = '';
+      const pattern = [1,0,1,0,1, 0,1,0,1,0, 1,1,0,0,1, 0,0,1,1,0, 1,0,1,0,1, 0,1,1,0,1, 1,0,0,1,1, 0,1,0,1,0, 1,1,1,0,0, 0,0,1,0,1, 1,0,1,1,0, 0,1,0,0,1, 1,1,0,1,0, 0,0,1,1,1, 1,0,0,0,1, 0,1,1,0,0, 1,0,1,0,1, 0,1,0,1,1, 1,1,0,0,0, 0,0,1,1,0, 1,0,0,1,1, 0,1,1,0,0, 1,1,0,1,0, 0,0,0,1,1, 1,0,1,0,1];
+      pattern.forEach(bit => {
+        const cell = document.createElement('div');
+        cell.className = 'wc-qr-cell';
+        cell.style.background = bit ? '#000' : '#fff';
+        qr.appendChild(cell);
+      });
+    }
+
+    function syncColor(type) {
+      if (type === 'bg') document.getElementById('bgColor').value = document.getElementById('bgColorPicker').value;
+      else document.getElementById('textColor').value = document.getElementById('textColorPicker').value;
+      updatePreview();
+    }
+
+    function syncColorFromText(type) {
+      const val = type === 'bg' ? document.getElementById('bgColor').value : document.getElementById('textColor').value;
+      if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+        if (type === 'bg') document.getElementById('bgColorPicker').value = val;
+        else document.getElementById('textColorPicker').value = val;
+        updatePreview();
+      }
+    }
+
+    function applyPreset(bg, text) {
+      document.getElementById('bgColor').value = bg;
+      document.getElementById('bgColorPicker').value = bg;
+      document.getElementById('textColor').value = text;
+      document.getElementById('textColorPicker').value = text;
+      updatePreview();
+    }
+
+    function updatePreview() {
+      const business = document.getElementById('businessName').value || 'LoyaltyPass';
+      const cardType = document.getElementById('cardType').value || 'Loyalty';
+      const bgColor = document.getElementById('bgColor').value || '#000000';
+      const textColor = document.getElementById('textColor').value || '#FFD700';
+      const textColorFaded = textColor + '80';
+
+      const preview = document.getElementById('cardPreview');
+      preview.style.background = bgColor;
+
+      document.getElementById('prev-business').textContent = business;
+      document.getElementById('prev-type').textContent = cardType + ' Card';
+      document.getElementById('prev-business').style.color = textColor;
+      document.getElementById('prev-type').style.color = textColorFaded;
+      document.getElementById('prev-points').style.color = textColor;
+      document.getElementById('prev-name').style.color = '#fff';
+      document.getElementById('prev-status').style.color = textColor;
+      document.getElementById('prev-status-label').style.color = textColorFaded;
+    }
+
+    function saveSettings() {
+      const settings = {
+        businessName: document.getElementById('businessName').value,
+        cardType: document.getElementById('cardType').value,
+        tagline: document.getElementById('tagline').value,
+        bgColor: document.getElementById('bgColor').value,
+        textColor: document.getElementById('textColor').value
+      };
+      if (!settings.businessName) { showToast('Please enter a business name!', 'error'); return; }
+      localStorage.setItem('walletpass-settings', JSON.stringify(settings));
+      showToast('Settings saved successfully!');
+    }
+
+    function openTierModal(tier) {
+      currentTier = tier;
+      const data = tierData[tier];
+      document.getElementById('modalTitle').textContent = `Edit ${tier.charAt(0).toUpperCase() + tier.slice(1)} Tier`;
+      document.getElementById('modalTierName').value = data.name;
+      document.getElementById('modalBg').value = data.bg;
+      document.getElementById('modalBgPicker').value = data.bg;
+      document.getElementById('modalText').value = data.text;
+      document.getElementById('modalTextPicker').value = data.text;
+      document.getElementById('modalPerks').value = data.perks;
+      document.getElementById('modalPoints').value = data.points;
+      document.getElementById('tierModal').classList.add('show');
+    }
+
+    function closeModal() { document.getElementById('tierModal').classList.remove('show'); }
+
+    function saveTier() {
+      const tier = currentTier;
+      const name = document.getElementById('modalTierName').value;
+      const bg = document.getElementById('modalBg').value;
+      const text = document.getElementById('modalText').value;
+      const perks = document.getElementById('modalPerks').value;
+      const points = document.getElementById('modalPoints').value;
+
+      tierData[tier] = { name, bg, text, perks, points: parseInt(points) };
+
+      document.getElementById(`${tier}-tier-name`).textContent = name;
+      document.getElementById(`${tier}-points-req`).textContent = `${points}+ points required`;
+      document.getElementById(`${tier}-perks`).innerHTML = perks.replace(/\n/g, '<br>');
+      document.getElementById(`${tier}-preview-name`).textContent = name;
+      document.getElementById(`${tier}-preview-perks`).textContent = perks.replace(/•\s/g, '').split('\n').join(' • ');
+
+      const cardPreview = document.getElementById(`${tier}-card-preview`);
+      cardPreview.style.background = bg;
+      cardPreview.style.borderColor = text;
+
+      localStorage.setItem('walletpass-tiers', JSON.stringify(tierData));
+      closeModal();
+      showToast(`${name} tier updated successfully!`);
+    }
+
+    function loadSettings() {
+      const saved = localStorage.getItem('walletpass-settings');
+      if (saved) {
+        const s = JSON.parse(saved);
+        document.getElementById('businessName').value = s.businessName || '';
+        document.getElementById('cardType').value = s.cardType || 'Loyalty';
+        document.getElementById('tagline').value = s.tagline || '';
+        document.getElementById('bgColor').value = s.bgColor || '#000000';
+        document.getElementById('bgColorPicker').value = s.bgColor || '#000000';
+        document.getElementById('textColor').value = s.textColor || '#FFD700';
+        document.getElementById('textColorPicker').value = s.textColor || '#FFD700';
+        updatePreview();
+      }
+      const savedTiers = localStorage.getItem('walletpass-tiers');
+      if (savedTiers) {
+        const tiers = JSON.parse(savedTiers);
+        Object.keys(tiers).forEach(tier => { tierData[tier] = tiers[tier]; });
+      }
+    }
+
+    generateQR();
+    loadSettings();
+    updatePreview();
+  </script>
+
+</body>
+</html>
