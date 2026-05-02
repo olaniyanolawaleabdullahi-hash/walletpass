@@ -23,6 +23,9 @@ app.get('/members-page', (req, res) => {
 app.get('/issue', (req, res) => {
   res.sendFile(path.resolve('issue.html'));
 });
+app.get('/settings', (req, res) => {
+  res.sendFile(path.resolve('settings.html'));
+});
 
 app.get('/members', async (req, res) => {
   try {
