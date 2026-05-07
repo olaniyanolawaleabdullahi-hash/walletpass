@@ -27,6 +27,52 @@ app.get('/settings', (req, res) => {
   res.sendFile(path.resolve('settings.html'));
 });
 
+app.get('/register', (req, res) => {
+  res.sendFile(path.resolve('register.html'));
+});
+
+app.post('/register/card', async (req, res) => {
+  try {
+    const { name, email, phone, businessName, walletType, bgColor, textColor, expiry } = req.body;
+    
+    const members = await getAllMembers();
+    const nextNumber = String(members.length + 1).padStart(3, '0');
+    const memberId = `MEMBER${nextNumber}`;
+
+    const memberData = {
+      name,
+      email,
+      phone: phone || '',
+      memberId,
+      businessName: businessName || 'LoyaltyPass Co.',
+      points: 0,
+      loyaltyStatus: 'Bronze Member',
+      expiryDate: expiry || '12/2026',
+      registeredAt: new Date().toISOString()
+    };
+
+    await addMember(memberData);
+
+    if (walletType === 'google') {
+      const customerData = {
+        id: memberId,
+        businessName: memberData.businessName,
+        name: memberData.name,
+        points: memberData.points,
+        loyaltyStatus: memberData.loyaltyStatus,
+        expiryDate: memberData.expiryDate
+      };
+      const googleWalletLink = await generateGoogleWalletLink(customerData);
+      res.json({ success: true, walletUrl: googleWalletLink });
+    } else {
+      res.json({ success: true, walletUrl: '/card/download?id=' + memberId });
+    }
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Failed to register card' });
+  }
+});
+
 app.get('/members', async (req, res) => {
   try {
     const members = await getAllMembers();

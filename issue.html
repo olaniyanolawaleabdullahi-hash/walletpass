@@ -177,6 +177,7 @@
       <div class="share-box" id="shareOptions">
         <p>Share card with customer:</p>
         <div class="share-btns">
+          <button class="share-btn" style="background:#1a1a1a;color:#FFD700;border:0.5px solid #FFD700;" onclick="shareRegistrationLink()">Self-Register Link</button>
           <button class="share-btn" style="background:#25D366;color:#fff;" onclick="shareWhatsApp()">WhatsApp</button>
           <button class="share-btn" style="background:#0072C6;color:#fff;" onclick="shareEmail()">Email</button>
           <button class="share-btn" style="background:#1a1a1a;color:#fff;border:0.5px solid #333;" onclick="copyLink()">Copy Link</button>
@@ -187,6 +188,16 @@
   </div>
 
   <script>
+
+    function shareRegistrationLink() {
+      const settings = JSON.parse(localStorage.getItem('walletpass-settings') || '{}');
+      const business = encodeURIComponent(settings.businessName || 'LoyaltyPass Co.');
+      const bg = encodeURIComponent(settings.bgColor || '#000000');
+      const text = encodeURIComponent(settings.textColor || '#FFD700');
+      const link = `https://walletpass-dp2j.onrender.com/register?b=${business}&bg=${bg}&text=${text}`;
+      navigator.clipboard.writeText(link);
+      alert('Registration link copied! Send this to your customers and they can add their own card!');
+    }
 
 function previewCard() {
       const name = document.getElementById('customerName').value;
