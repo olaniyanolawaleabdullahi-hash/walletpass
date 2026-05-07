@@ -177,10 +177,10 @@
       <div class="share-box" id="shareOptions">
         <p>Share card with customer:</p>
         <div class="share-btns">
-          <button class="share-btn" style="background:#1a1a1a;color:#FFD700;border:0.5px solid #FFD700;" onclick="shareRegistrationLink()">Self-Register Link</button>
           <button class="share-btn" style="background:#25D366;color:#fff;" onclick="shareWhatsApp()">WhatsApp</button>
           <button class="share-btn" style="background:#0072C6;color:#fff;" onclick="shareEmail()">Email</button>
           <button class="share-btn" style="background:#1a1a1a;color:#fff;border:0.5px solid #333;" onclick="copyLink()">Copy Link</button>
+          <button class="share-btn" style="background:#2a2000;color:#FFD700;border:0.5px solid #FFD700;" onclick="shareRegLink()">Self-Register Link</button>
         </div>
         <p class="share-link" id="cardLink"></p>
       </div>
@@ -188,6 +188,15 @@
   </div>
 
   <script>
+    function shareRegLink() {
+      const settings = JSON.parse(localStorage.getItem('wp-settings') || '{}');
+      const biz = encodeURIComponent(settings.bizName || 'LoyaltyPass Co.');
+      const bg = encodeURIComponent(settings.bg || '#000000');
+      const tc = encodeURIComponent(settings.tc || '#FFD700');
+      const link = `https://walletpass-dp2j.onrender.com/register?b=${biz}&bg=${bg}&text=${tc}`;
+      navigator.clipboard.writeText(link);
+      alert('Registration link copied! Send this to your customers — they fill in their own name and add the card to their wallet!');
+    }
 
     function shareRegistrationLink() {
       const settings = JSON.parse(localStorage.getItem('walletpass-settings') || '{}');
