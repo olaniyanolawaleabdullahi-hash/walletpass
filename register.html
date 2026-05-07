@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Your Loyalty Card</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Arial,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    .container{width:100%;max-width:420px}
+    .header{text-align:center;margin-bottom:28px}
+    .logo{width:64px;height:64px;background:#FFD700;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#000;margin:0 auto 16px}
+    .header h1{font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px}
+    .header p{font-size:14px;color:#444;line-height:1.6}
+    .wcard{border-radius:16px;padding:18px;position:relative;overflow:hidden;margin-bottom:24px;border:0.5px solid rgba(255,215,0,0.2)}
+    .wcard::before{content:'';position:absolute;top:-35px;right:-35px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,0.04)}
+    .wc-top{display:flex;justify-content:space-between;margin-bottom:14px;position:relative;z-index:1}
+    .wc-biz{font-size:13px;font-weight:800}
+    .wc-type{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;opacity:0.5;margin-top:2px}
+    .wc-pts-lbl{font-size:8px;text-transform:uppercase;opacity:0.5;text-align:right}
+    .wc-pts{font-size:20px;font-weight:800;text-align:right}
+    .wc-name{font-size:15px;font-weight:600;margin-bottom:14px;position:relative;z-index:1;min-height:22px;transition:all 0.3s}
+    .wc-name.empty{opacity:0.3;border-bottom:1px dashed rgba(255,255,255,0.2);padding-bottom:4px}
+    .wc-bot{display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1;margin-top:10px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.08)}
+    .wc-fields{display:flex;gap:16px}
+    .wc-fl-lbl{font-size:8px;text-transform:uppercase;opacity:0.5;margin-bottom:2px}
+    .wc-fl-val{font-size:11px;font-weight:700}
+    .wc-qr{width:46px;height:46px;background:#fff;border-radius:5px;padding:4px;display:grid;grid-template-columns:repeat(5,1fr);gap:1px}
+    .qrc{border-radius:1px}
+    .form-card{background:#111;border:0.5px solid #1a1a1a;border-radius:20px;padding:24px}
+    .form-title{font-size:16px;font-weight:700;color:#FFD700;margin-bottom:6px}
+    .form-sub{font-size:13px;color:#444;margin-bottom:20px;line-height:1.5}
+    .fg{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .fg label{font-size:11px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+    .fg input{padding:14px 16px;background:#0a0a0a;border:0.5px solid #222;border-radius:12px;font-size:15px;color:#fff;outline:none;transition:border-color 0.2s;font-family:inherit}
+    .fg input:focus{border-color:#FFD700}
+    .fg input::placeholder{color:#333}
+    .err{font-size:13px;color:#ff4444;margin-top:4px;display:none}
+    .btns{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+    .btn-g{width:100%;padding:14px;background:#fff;color:#000;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.2s}
+    .btn-g:hover{background:#f0f0f0;transform:translateY(-1px)}
+    .btn-a{width:100%;padding:14px;background:#000;color:#fff;border:0.5px solid #333;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.2s}
+    .btn-a:hover{background:#111;transform:translateY(-1px)}
+    .loading{display:none;text-align:center;padding:30px}
+    .spinner{width:36px;height:36px;border:2px solid #222;border-top-color:#FFD700;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .success{display:none;text-align:center;padding:20px}
+    .success-icon{width:64px;height:64px;background:#0a2a0a;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;border:0.5px solid #4CAF50}
+    .success h2{font-size:20px;font-weight:700;color:#4CAF50;margin-bottom:8px}
+    .success p{font-size:14px;color:#444;line-height:1.6}
+    .footer{text-align:center;margin-top:24px;font-size:11px;color:#222}
+    .footer span{color:#333}
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="logo" id="logo">LP</div>
+    <h1 id="headerTitle">Your Loyalty Card Awaits</h1>
+    <p>Fill in your details below to add your card to your wallet instantly.</p>
+  </div>
+
+  <!-- CARD PREVIEW -->
+  <div class="wcard" id="wcard" style="background:#000">
+    <div class="wc-top">
+      <div>
+        <div class="wc-biz" id="pvBiz" style="color:#FFD700">LoyaltyPass Co.</div>
+        <div class="wc-type" id="pvType" style="color:rgba(255,215,0,0.5)">Loyalty Card</div>
+      </div>
+      <div>
+        <div class="wc-pts-lbl" style="color:rgba(255,215,0,0.5)">POINTS</div>
+        <div class="wc-pts" id="pvPts" style="color:#FFD700">0</div>
+      </div>
+    </div>
+    <div class="wc-name empty" id="pvName" style="color:#fff">Your name will appear here</div>
+    <div class="wc-bot">
+      <div class="wc-fields">
+        <div>
+          <div class="wc-fl-lbl" style="color:rgba(255,215,0,0.5)">STATUS</div>
+          <div class="wc-fl-val" id="pvStatus" style="color:#FFD700">Bronze Member</div>
+        </div>
+        <div>
+          <div class="wc-fl-lbl" style="color:rgba(255,215,0,0.5)">EXPIRES</div>
+          <div class="wc-fl-val" id="pvExpiry" style="color:#FFD700">12/2026</div>
+        </div>
+      </div>
+      <div class="wc-qr" id="qrGrid"></div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-card" id="formSection">
+    <div class="form-title">Add Your Card</div>
+    <div class="form-sub">Enter your details exactly as you'd like them to appear on your loyalty card.</div>
+
+    <div class="fg">
+      <label>Full Name</label>
+      <input type="text" id="custName" placeholder="e.g. John Adeyemi" oninput="updateName()"/>
+    </div>
+    <div class="fg">
+      <label>Email Address</label>
+      <input type="email" id="custEmail" placeholder="your@email.com"/>
+    </div>
+    <div class="fg">
+      <label>Phone Number</label>
+      <input type="tel" id="custPhone" placeholder="+234 800 000 0000"/>
+    </div>
+
+    <p class="err" id="errMsg"></p>
+
+    <div class="btns">
+      <button class="btn-g" onclick="addToWallet('google')">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+        Add to Google Wallet
+      </button>
+      <button class="btn-a" onclick="addToWallet('apple')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Add to Apple Wallet
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loadingSection">
+    <div class="spinner"></div>
+    <p style="font-size:14px;color:#444">Generating your card...</p>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="success" id="successSection">
+    <div class="success-icon">&#10003;</div>
+    <h2>Card Added!</h2>
+    <p>Your loyalty card has been added to your wallet. Open your wallet app to see it!</p>
+  </div>
+
+  <div class="footer">Powered by <span>WalletPass</span></div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const bizName = params.get('b') || 'LoyaltyPass Co.';
+  const cardType = params.get('type') || 'Loyalty';
+  const bgColor = params.get('bg') || '#000000';
+  const textColor = params.get('text') || '#FFD700';
+  const expiry = params.get('expiry') || '12/2026';
+
+  function buildQR(){
+    const g=document.getElementById('qrGrid');
+    [1,0,1,0,1,0,1,0,1,1,0,0,1,0,1,0,0,1,1,0,1,0,1,0,1].forEach(b=>{
+      const c=document.createElement('div');c.className='qrc';
+      c.style.background=b?'#000':'#fff';g.appendChild(c);
+    });
+  }
+
+  function setup(){
+    document.getElementById('wcard').style.background=bgColor;
+    document.getElementById('wcard').style.borderColor=textColor+'33';
+    document.getElementById('pvBiz').textContent=bizName;
+    document.getElementById('pvBiz').style.color=textColor;
+    document.getElementById('pvType').textContent=cardType+' Card';
+    document.getElementById('pvType').style.color=textColor+'80';
+    document.getElementById('pvPts').style.color=textColor;
+    document.getElementById('pvStatus').style.color=textColor;
+    document.getElementById('pvExpiry').textContent=expiry;
+    document.getElementById('pvExpiry').style.color=textColor;
+    document.getElementById('headerTitle').textContent='Your '+bizName+' Card Awaits';
+    document.getElementById('logo').textContent=bizName.charAt(0).toUpperCase();
+  }
+
+  function updateName(){
+    const name=document.getElementById('custName').value;
+    const el=document.getElementById('pvName');
+    if(name){el.textContent=name;el.classList.remove('empty');}
+    else{el.textContent='Your name will appear here';el.classList.add('empty');}
+  }
+
+  async function addToWallet(type){
+    const name=document.getElementById('custName').value.trim();
+    const email=document.getElementById('custEmail').value.trim();
+    const phone=document.getElementById('custPhone').value.trim();
+    const err=document.getElementById('errMsg');
+
+    if(!name){err.textContent='Please enter your full name!';err.style.display='block';return;}
+    if(!email){err.textContent='Please enter your email address!';err.style.display='block';return;}
+    err.style.display='none';
+
+    document.getElementById('formSection').style.display='none';
+    document.getElementById('loadingSection').style.display='block';
+
+    try{
+      const res=await fetch('/register/card',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name,email,phone,businessName:bizName,walletType:type,bgColor,textColor,expiry})
+      });
+      const data=await res.json();
+      if(data.success && data.walletUrl){
+        window.location.href=data.walletUrl;
+      } else {
+        throw new Error('Failed');
+      }
+    } catch(e){
+      document.getElementById('loadingSection').style.display='none';
+      document.getElementById('formSection').style.display='block';
+      err.textContent='Something went wrong. Please try again!';
+      err.style.display='block';
+    }
+  }
+
+  buildQR();
+  setup();
+</script>
+</body>
+</html>
