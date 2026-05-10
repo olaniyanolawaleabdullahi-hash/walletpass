@@ -1,5 +1,6 @@
 const { initializeApp } = require('firebase/app');
-const { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } = require('firebase/firestore');
+const { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, where } = require('firebase/firestore');
+
 const firebaseConfig = {
   apiKey: "AIzaSyBMOR53eRC_eafMewxKuiDRFSyzMyil5f0",
   authDomain: "walletpass-admin.firebaseapp.com",
@@ -23,9 +24,15 @@ async function addMember(memberData) {
   }
 }
 
-async function getAllMembers() {
+async function getAllMembers(merchantId) {
   try {
-    const querySnapshot = await getDocs(collection(db, 'members'));
+    let q;
+    if (merchantId) {
+      q = query(collection(db, 'members'), where('merchantId', '==', merchantId));
+    } else {
+      q = collection(db, 'members');
+    }
+    const querySnapshot = await getDocs(q);
     const members = [];
     querySnapshot.forEach((doc) => {
       members.push({ id: doc.id, ...doc.data() });
@@ -48,4 +55,42 @@ async function updateMember(memberId, updatedData) {
   }
 }
 
-module.exports = { db, addMember, getAllMembers, updateMember };
+async function addMerchant(merchantData) {
+  try {
+    const docRef = await addDoc(collection(db, 'merchants'), merchantData);
+    console.log('Merchant added with ID:', docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding merchant:', error);
+    throw error;
+  }
+}
+
+async function getAllMerchants() {
+  try {
+    const querySnapshot = await getDocs(collection(db, 'merchants'));
+    const merchants = [];
+    querySnapshot.forEach((doc) => {
+      merchants.push({ id: doc.id, ...doc.data() });
+    });
+    return merchants;
+  } catch (error) {
+    console.error('Error getting merchants:', error);
+    throw error;
+  }
+}
+
+async function getMerchantByEmail(email) {
+  try {
+    const q = query(collection(db, 'merchants'), where('email', '==', email));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) return null;
+    const doc = querySnapshot.docs[0];
+    return { id: doc.id, ...doc.data() };
+  } catch (error) {
+    console.error('Error getting merchant:', error);
+    throw error;
+  }
+}
+
+module.exports = { db, addMember, getAllMembers, updateMember, addMerchant, getAllMerchants, getMerchantByEmail };

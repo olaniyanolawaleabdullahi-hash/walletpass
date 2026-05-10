@@ -2,8 +2,7 @@ const express = require('express');
 const path = require('path');
 const { createLoyaltyCard } = require('./card');
 const { generatePass } = require('./generatePass');
-const { addMember, getAllMembers, updateMember } = require('./firebase');
-const { generateGoogleWalletLink } = require('./googleWallet');const app = express();
+const { addMember, getAllMembers, updateMember, addMerchant, getAllMerchants, getMerchantByEmail } = require('./firebase');const { generateGoogleWalletLink } = require('./googleWallet');const app = express();
 const port = 3000;
 
 app.use(express.json());
@@ -25,6 +24,54 @@ app.get('/issue', (req, res) => {
 });
 app.get('/settings', (req, res) => {
   res.sendFile(path.resolve('settings.html'));
+});
+
+app.get('/superadmin', (req, res) => {
+  res.sendFile(path.resolve('superadmin.html'));
+});
+
+app.get('/admin/merchants', async (req, res) => {
+  try {
+    const merchants = await getAllMerchants();
+    const members = await getAllMembers();
+    res.json({ merchants, totalMembers: members.length });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get merchants' });
+  }
+});
+
+app.post('/admin/merchants/create', async (req, res) => {
+  try {
+    const { businessName, email, password, phone, plan, status, createdAt } = req.body;
+    
+    const merchantData = {
+      businessName,
+      email,
+      phone: phone || '',
+      plan: plan || 'starter',
+      status: status || 'active',
+      createdAt: createdAt || new Date().toISOString()
+    };
+
+    const merchantId = await addMerchant(merchantData);
+    res.json({ success: true, merchantId });
+  } catch (error) {
+    console.error('Error creating merchant:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+app.post('/admin/merchants/delete', async (req, res) => {
+  try {
+    const { merchantId } = req.body;
+    const { doc, deleteDoc } = require('firebase/firestore');
+    await deleteDoc(doc(db, 'merchants', merchantId));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete merchant' });
+  }
 });
 app.get('/register', (req, res) => {
   res.sendFile(path.resolve('register.html'));

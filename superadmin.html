@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletPass — Super Admin</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Arial,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;padding:24px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;padding-bottom:20px;border-bottom:0.5px solid #1a1a1a}
+    .topbar h1{font-size:22px;color:#FFD700;font-weight:700}
+    .topbar p{font-size:13px;color:#444;margin-top:4px}
+    .logout-btn{padding:8px 16px;background:transparent;color:#ff4444;border:0.5px solid #ff4444;border-radius:20px;font-size:12px;cursor:pointer}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .card{background:#111;border:0.5px solid #1a1a1a;border-radius:16px;padding:24px;margin-bottom:20px}
+    .card-title{font-size:11px;font-weight:700;color:#FFD700;margin-bottom:20px;padding-bottom:12px;border-bottom:0.5px solid #1a1a1a;text-transform:uppercase;letter-spacing:0.08em}
+    .fg{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .fg label{font-size:11px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+    .fg input,.fg select{padding:12px 14px;background:#0a0a0a;border:0.5px solid #222;border-radius:10px;font-size:14px;color:#fff;outline:none;transition:border-color 0.2s;font-family:inherit}
+    .fg input:focus,.fg select:focus{border-color:#FFD700}
+    .btn-save{width:100%;padding:14px;background:#FFD700;color:#000;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer}
+    .btn-save:hover{background:#FFC800}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+    .stat{background:#111;border:0.5px solid #1a1a1a;border-radius:12px;padding:16px;text-align:center}
+    .stat-val{font-size:28px;font-weight:700;color:#FFD700}
+    .stat-lbl{font-size:11px;color:#444;margin-top:4px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th{text-align:left;padding:10px 12px;background:#0a0a0a;color:#444;font-size:11px;text-transform:uppercase;letter-spacing:0.06em}
+    td{padding:12px;border-bottom:0.5px solid #1a1a1a;color:#ccc}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#0d0d0d}
+    .badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+    .badge-active{background:#0a2a0a;color:#4CAF50;border:0.5px solid #4CAF50}
+    .act-btn{padding:5px 12px;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer}
+    .act-delete{background:#2a0000;color:#ff4444;border:0.5px solid #ff4444;cursor:pointer}
+    .toast{position:fixed;top:24px;right:24px;padding:14px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateX(120px);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);max-width:320px}
+    .toast.show{opacity:1;transform:translateX(0)}
+    .toast.success{background:rgba(10,42,10,0.95);color:#4CAF50;border:0.5px solid #4CAF50}
+    .toast.error{background:rgba(42,0,0,0.95);color:#ff4444;border:0.5px solid #ff4444}
+    @media(max-width:768px){.grid2{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div>
+      <h1>WalletPass Super Admin</h1>
+      <p>Manage all merchant accounts from here</p>
+    </div>
+    <button class="logout-btn" onclick="location.href='/login'">Logout</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-val" id="totalMerchants">0</div><div class="stat-lbl">Total Merchants</div></div>
+    <div class="stat"><div class="stat-val" id="totalMembers">0</div><div class="stat-lbl">Total Members</div></div>
+    <div class="stat"><div class="stat-val" id="activeMerchants">0</div><div class="stat-lbl">Active Merchants</div></div>
+  </div>
+
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <div class="card-title">Create New Merchant</div>
+        <div class="fg"><label>Business Name</label><input type="text" id="bizName" placeholder="e.g. FitLife Gym"/></div>
+        <div class="fg"><label>Email Address</label><input type="email" id="bizEmail" placeholder="owner@business.com"/></div>
+        <div class="fg"><label>Password</label><input type="password" id="bizPassword" placeholder="Minimum 6 characters"/></div>
+        <div class="fg"><label>Phone Number</label><input type="tel" id="bizPhone" placeholder="+234 800 000 0000"/></div>
+        <div class="fg">
+          <label>Plan</label>
+          <select id="bizPlan">
+            <option value="starter">Starter — Up to 100 members</option>
+            <option value="growth">Growth — Up to 500 members</option>
+            <option value="pro">Pro — Unlimited members</option>
+          </select>
+        </div>
+        <button class="btn-save" id="createBtn">Create Merchant Account</button>
+        <p id="createMsg" style="font-size:13px;margin-top:12px"></p>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">All Merchants</div>
+        <div id="loadingMsg" style="font-size:13px;color:#444">Loading merchants...</div>
+        <div style="overflow-x:auto">
+          <table id="merchantsTable" style="display:none">
+            <thead>
+              <tr>
+                <th>Business</th>
+                <th>Email</th>
+                <th>Plan</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="merchantsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toast(msg, type='success'){
+      const old=document.querySelector('.toast');
+      if(old) old.remove();
+      const t=document.createElement('div');
+      t.className='toast '+type;
+      t.textContent=msg;
+      document.body.appendChild(t);
+      setTimeout(()=>t.classList.add('show'),10);
+      setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},3500);
+    }
+
+    async function loadMerchants(){
+      try{
+        const res=await fetch('/admin/merchants');
+        const data=await res.json();
+        const tbody=document.getElementById('merchantsBody');
+        tbody.innerHTML='';
+
+        document.getElementById('totalMerchants').textContent=data.merchants.length;
+        document.getElementById('totalMembers').textContent=data.totalMembers;
+        document.getElementById('activeMerchants').textContent=data.merchants.filter(m=>m.status==='active').length;
+
+        if(data.merchants.length===0){
+          document.getElementById('loadingMsg').textContent='No merchants yet. Create one!';
+          document.getElementById('loadingMsg').style.display='block';
+          return;
+        }
+
+        data.merchants.forEach(m=>{
+          tbody.innerHTML+=`<tr>
+            <td style="font-weight:500;color:#fff">${m.businessName}</td>
+            <td>${m.email}</td>
+            <td style="text-transform:capitalize">${m.plan||'starter'}</td>
+            <td><span class="badge badge-active">${m.status||'active'}</span></td>
+            <td><button class="act-delete" onclick="deleteMerchant('${m.id}','${m.businessName}')">Delete</button></td>
+          </tr>`;
+        });
+
+        document.getElementById('loadingMsg').style.display='none';
+        document.getElementById('merchantsTable').style.display='table';
+      } catch(e){
+        document.getElementById('loadingMsg').textContent='Error loading merchants!';
+      }
+    }
+
+    document.getElementById('createBtn').addEventListener('click', async function(){
+      const bizName=document.getElementById('bizName').value.trim();
+      const email=document.getElementById('bizEmail').value.trim();
+      const password=document.getElementById('bizPassword').value.trim();
+      const phone=document.getElementById('bizPhone').value.trim();
+      const plan=document.getElementById('bizPlan').value;
+      const msg=document.getElementById('createMsg');
+
+      if(!bizName||!email||!password){
+        msg.style.color='#ff4444';
+        msg.textContent='Please fill in all required fields!';
+        return;
+      }
+      if(password.length<6){
+        msg.style.color='#ff4444';
+        msg.textContent='Password must be at least 6 characters!';
+        return;
+      }
+
+      msg.style.color='#FFD700';
+      msg.textContent='Creating merchant account...';
+
+      try{
+        const res=await fetch('/admin/merchants/create',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            businessName:bizName,
+            email,
+            password,
+            phone,
+            plan,
+            status:'active',
+            createdAt:new Date().toISOString()
+          })
+        });
+        const data=await res.json();
+        if(data.success){
+          msg.style.color='#4CAF50';
+          msg.textContent=`Merchant "${bizName}" created successfully!`;
+          document.getElementById('bizName').value='';
+          document.getElementById('bizEmail').value='';
+          document.getElementById('bizPassword').value='';
+          document.getElementById('bizPhone').value='';
+          loadMerchants();
+          toast('Merchant created!');
+        } else {
+          throw new Error(data.error||'Failed');
+        }
+      } catch(e){
+        msg.style.color='#ff4444';
+        msg.textContent='Error: '+e.message;
+        toast('Failed to create merchant!','error');
+      }
+    });
+
+    async function deleteMerchant(id, name){
+      if(!confirm(`Delete "${name}"?`)) return;
+      try{
+        const res=await fetch('/admin/merchants/delete',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({merchantId:id})
+        });
+        const data=await res.json();
+        if(data.success){toast(name+' deleted!');loadMerchants();}
+        else throw new Error('Failed');
+      } catch(e){
+        toast('Error deleting!','error');
+      }
+    }
+
+    loadMerchants();
+  </script>
+</body>
+</html>
