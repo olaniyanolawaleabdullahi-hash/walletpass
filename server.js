@@ -112,7 +112,49 @@ app.post('/register/card', async (req, res) => {
     res.status(500).json({ error: 'Failed to register card' });
   }
 });
+app.get('/stampcard', (req, res) => {
+  res.sendFile(path.resolve('stampcard.html'));
+});
 
+app.post('/register/stampcard', async (req, res) => {
+  try {
+    const { name, email, phone, businessName, reward, totalStamps, walletType, bgColor, textColor } = req.body;
+    const members = await getAllMembers();
+    const nextNumber = String(members.length + 1).padStart(3, '0');
+    const memberId = `STAMP${nextNumber}`;
+    const memberData = {
+      name, email,
+      phone: phone || '',
+      memberId,
+      businessName: businessName || 'LoyaltyPass Co.',
+      points: 0,
+      stampsCollected: 0,
+      totalStamps: totalStamps || 10,
+      reward: reward || 'free item',
+      loyaltyStatus: 'Bronze Member',
+      cardType: 'stamp',
+      expiryDate: '12/2026',
+      registeredAt: new Date().toISOString()
+    };
+    await addMember(memberData);
+    if(walletType === 'google'){
+      const googleWalletLink = await generateGoogleWalletLink({
+        id: memberId,
+        businessName: memberData.businessName,
+        name: memberData.name,
+        points: memberData.stampsCollected,
+        loyaltyStatus: `${memberData.stampsCollected}/${memberData.totalStamps} stamps`,
+        expiryDate: memberData.expiryDate
+      });
+      res.json({ success: true, walletUrl: googleWalletLink });
+    } else {
+      res.json({ success: true, walletUrl: '/card/download?id=' + memberId });
+    }
+  } catch(error){
+    console.error('Stamp card error:', error);
+    res.status(500).json({ error: 'Failed to register stamp card' });
+  }
+});
 app.get('/register', (req, res) => {
   res.sendFile(path.resolve('register.html'));
 });
