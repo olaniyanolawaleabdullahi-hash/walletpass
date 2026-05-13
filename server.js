@@ -21,6 +21,20 @@ app.get('/superadmin', (req, res) => res.sendFile(path.resolve('superadmin.html'
 app.get('/stampcard', (req, res) => res.sendFile(path.resolve('stampcard.html')));
 app.get('/checkin', (req, res) => res.sendFile(path.resolve('checkin.html')));
 
+app.post('/members/checkin', async (req, res) => {
+  try {
+    const { memberId } = req.body;
+    const members = await getAllMembers();
+    const member = members.find(m => m.memberId === memberId);
+    if(!member) return res.status(404).json({ error: 'Member not found' });
+    const newStamps = (member.stampsCollected || 0) + 1;
+    await updateMember(member.id, { stampsCollected: newStamps });
+    const completed = newStamps >= (member.totalStamps || 10);
+    res.json({ success: true, stampsCollected: newStamps, totalStamps: member.totalStamps || 10, completed, memberName: member.name });
+  } catch(error){
+    res.status(500).json({ error: 'Failed to add stamp' });
+  }
+});
 // AUTH
 app.post('/auth/check-merchant', async (req, res) => {
   try {

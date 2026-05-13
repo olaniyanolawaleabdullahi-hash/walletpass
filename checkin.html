@@ -1,7 +1,238 @@
 <!DOCTYPE html>
-<html>
-<head><title>Check In</title></head>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletPass — Staff Check-in</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Arial,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+    .container{width:100%;max-width:420px}
+    .header{text-align:center;margin-bottom:32px}
+    .header h1{font-size:24px;font-weight:700;color:#FFD700;margin-bottom:6px}
+    .header p{font-size:13px;color:#444}
+    .card{background:#111;border:0.5px solid #1a1a1a;border-radius:20px;padding:28px;margin-bottom:20px}
+    .card-title{font-size:11px;font-weight:700;color:#FFD700;margin-bottom:16px;text-transform:uppercase;letter-spacing:0.08em}
+    .fg{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .fg label{font-size:11px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+    .fg input{padding:14px 16px;background:#0a0a0a;border:0.5px solid #222;border-radius:10px;font-size:15px;color:#fff;outline:none;transition:border-color 0.2s;font-family:inherit;text-transform:uppercase;letter-spacing:0.05em}
+    .fg input:focus{border-color:#FFD700}
+    .fg input::placeholder{color:#333;text-transform:none;letter-spacing:0}
+    .btn{width:100%;padding:14px;background:#FFD700;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s}
+    .btn:hover{background:#FFC800;transform:translateY(-1px)}
+    .btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+    .btn-outline{width:100%;padding:12px;background:transparent;color:#FFD700;border:0.5px solid #FFD700;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;transition:all 0.2s}
+    .btn-outline:hover{background:#1a1500}
+
+    /* SUCCESS STATE */
+    .result-card{display:none;background:#111;border:0.5px solid #1a1a1a;border-radius:20px;padding:28px;text-align:center}
+    .result-card.success{border-color:#4CAF50}
+    .result-card.reward{border-color:#FFD700;background:#0f0c00}
+    .result-card.error{border-color:#ff4444}
+    .result-icon{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px}
+    .result-icon.success{background:#0a2a0a;border:2px solid #4CAF50}
+    .result-icon.reward{background:#2a2000;border:2px solid #FFD700}
+    .result-icon.error{background:#2a0000;border:2px solid #ff4444}
+    .result-name{font-size:20px;font-weight:700;margin-bottom:6px}
+    .result-msg{font-size:14px;color:#555;margin-bottom:20px;line-height:1.6}
+
+    /* STAMP DISPLAY */
+    .stamp-display{margin:16px 0}
+    .stamp-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+    .stamp-dot{width:24px;height:24px;border-radius:50%;border:2px solid #333;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all 0.3s}
+    .stamp-dot.filled{background:#FFD700;border-color:#FFD700;color:#000}
+    .stamp-dot.new{background:#4CAF50;border-color:#4CAF50;color:#fff;animation:pop 0.4s ease}
+    @keyframes pop{0%{transform:scale(0)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+    .stamp-count{font-size:13px;color:#555;margin-top:8px}
+
+    /* RECENT CHECK-INS */
+    .recent{margin-top:8px}
+    .recent-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid #1a1a1a}
+    .recent-item:last-child{border-bottom:none}
+    .recent-name{font-size:13px;color:#fff;font-weight:500}
+    .recent-time{font-size:11px;color:#444}
+    .recent-stamps{font-size:12px;color:#FFD700;font-weight:600}
+
+    .back-btn{display:flex;align-items:center;gap:8px;color:#444;font-size:13px;text-decoration:none;margin-bottom:24px}
+    .back-btn:hover{color:#fff}
+
+    .toast{position:fixed;top:24px;right:24px;padding:14px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateX(120px);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);max-width:320px}
+    .toast.show{opacity:1;transform:translateX(0)}
+    .toast.success{background:rgba(10,42,10,0.95);color:#4CAF50;border:0.5px solid #4CAF50}
+    .toast.error{background:rgba(42,0,0,0.95);color:#ff4444;border:0.5px solid #ff4444}
+  </style>
+</head>
 <body>
-<h1>Check In Coming Soon</h1>
+
+<div class="container">
+  <a href="/merchant-dashboard" class="back-btn">← Back to Dashboard</a>
+
+  <div class="header">
+    <h1>Staff Check-in</h1>
+    <p id="bizSubtitle">Add a stamp to a customer's card</p>
+  </div>
+
+  <!-- INPUT FORM -->
+  <div class="card" id="inputCard">
+    <div class="card-title">Enter Member ID</div>
+    <div class="fg">
+      <label>Member ID</label>
+      <input type="text" id="memberIdInput" placeholder="e.g. STAMP001" autofocus/>
+    </div>
+    <button class="btn" id="checkinBtn">Add Stamp</button>
+    <p style="font-size:12px;color:#333;text-align:center;margin-top:12px">The Member ID is shown on the customer's wallet card</p>
+  </div>
+
+  <!-- RESULT CARD -->
+  <div class="result-card" id="resultCard">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="result-name" id="resultName"></div>
+    <div class="result-msg" id="resultMsg"></div>
+    <div class="stamp-display">
+      <div class="stamp-row" id="stampRow"></div>
+      <div class="stamp-count" id="stampCount"></div>
+    </div>
+    <button class="btn" onclick="resetForm()">Check In Another Customer</button>
+    <button class="btn-outline" onclick="location.href='/merchant-dashboard'">Back to Dashboard</button>
+  </div>
+
+  <!-- RECENT CHECK-INS -->
+  <div class="card" id="recentCard">
+    <div class="card-title">Recent Check-ins Today</div>
+    <div class="recent" id="recentList">
+      <p style="font-size:13px;color:#444">No check-ins yet today.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toast(msg, type='success'){
+    const old=document.querySelector('.toast');if(old)old.remove();
+    const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
+    document.body.appendChild(t);
+    setTimeout(()=>t.classList.add('show'),10);
+    setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},3500);
+  }
+
+  const bizName = localStorage.getItem('merchantBizName') || 'My Business';
+  document.getElementById('bizSubtitle').textContent = `Add a stamp to a ${bizName} customer's card`;
+
+  const recentCheckins = [];
+
+  document.getElementById('memberIdInput').addEventListener('keypress', function(e){
+    if(e.key === 'Enter') document.getElementById('checkinBtn').click();
+  });
+
+  document.getElementById('checkinBtn').addEventListener('click', async function(){
+    const memberId = document.getElementById('memberIdInput').value.trim().toUpperCase();
+    const btn = document.getElementById('checkinBtn');
+
+    if(!memberId){
+      toast('Please enter a Member ID!', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Adding stamp...';
+
+    try{
+      const res = await fetch('/members/checkin', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ memberId })
+      });
+      const data = await res.json();
+
+      if(data.success){
+        showResult(data);
+        addToRecent(data.memberName, memberId, data.stampsCollected, data.totalStamps);
+      } else {
+        showError(data.error || 'Member not found. Please check the ID.');
+      }
+    } catch(e){
+      showError('Connection error. Please try again.');
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Add Stamp';
+  });
+
+  function showResult(data){
+    document.getElementById('inputCard').style.display = 'none';
+    const resultCard = document.getElementById('resultCard');
+    resultCard.style.display = 'block';
+
+    const { memberName, stampsCollected, totalStamps, completed } = data;
+
+    if(completed){
+      resultCard.className = 'result-card reward';
+      document.getElementById('resultIcon').className = 'result-icon reward';
+      document.getElementById('resultIcon').textContent = '🎉';
+      document.getElementById('resultName').textContent = memberName;
+      document.getElementById('resultMsg').textContent = `${memberName} has completed their stamp card! Please give them their reward now.`;
+      document.getElementById('resultMsg').style.color = '#FFD700';
+    } else {
+      resultCard.className = 'result-card success';
+      document.getElementById('resultIcon').className = 'result-icon success';
+      document.getElementById('resultIcon').textContent = '✓';
+      document.getElementById('resultName').textContent = memberName;
+      const remaining = totalStamps - stampsCollected;
+      document.getElementById('resultMsg').textContent = `Stamp added! ${memberName} needs ${remaining} more stamp${remaining === 1 ? '' : 's'} for their reward.`;
+      document.getElementById('resultMsg').style.color = '#555';
+    }
+
+    buildStampDisplay(stampsCollected, totalStamps);
+  }
+
+  function buildStampDisplay(filled, total){
+    const row = document.getElementById('stampRow');
+    row.innerHTML = '';
+    for(let i=0;i<total;i++){
+      const dot = document.createElement('div');
+      dot.className = 'stamp-dot ' + (i < filled ? (i === filled-1 ? 'new' : 'filled') : '');
+      dot.textContent = i < filled ? '✓' : '';
+      row.appendChild(dot);
+    }
+    document.getElementById('stampCount').textContent = `${filled} of ${total} stamps collected`;
+  }
+
+  function showError(msg){
+    document.getElementById('inputCard').style.display = 'none';
+    const resultCard = document.getElementById('resultCard');
+    resultCard.style.display = 'block';
+    resultCard.className = 'result-card error';
+    document.getElementById('resultIcon').className = 'result-icon error';
+    document.getElementById('resultIcon').textContent = '✕';
+    document.getElementById('resultName').textContent = 'Not Found';
+    document.getElementById('resultMsg').textContent = msg;
+    document.getElementById('resultMsg').style.color = '#ff4444';
+    document.getElementById('stampRow').innerHTML = '';
+    document.getElementById('stampCount').textContent = '';
+  }
+
+  function addToRecent(name, id, stamps, total){
+    const now = new Date();
+    const time = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    recentCheckins.unshift({ name, id, stamps, total, time });
+
+    const list = document.getElementById('recentList');
+    list.innerHTML = recentCheckins.slice(0,5).map(c => `
+      <div class="recent-item">
+        <div>
+          <div class="recent-name">${c.name}</div>
+          <div class="recent-time">${c.id} · ${c.time}</div>
+        </div>
+        <div class="recent-stamps">${c.stamps}/${c.total} ◆</div>
+      </div>
+    `).join('');
+  }
+
+  function resetForm(){
+    document.getElementById('resultCard').style.display = 'none';
+    document.getElementById('inputCard').style.display = 'block';
+    document.getElementById('memberIdInput').value = '';
+    document.getElementById('memberIdInput').focus();
+  }
+</script>
 </body>
 </html>
