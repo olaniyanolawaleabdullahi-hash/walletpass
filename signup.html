@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletPass — Get Started</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Arial,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;display:flex}
+    .left{width:45%;background:#000;padding:60px;display:flex;flex-direction:column;justify-content:space-between;border-right:0.5px solid #1a1a1a}
+    .right{flex:1;padding:60px;display:flex;align-items:center;justify-content:center}
+    .logo{font-size:22px;font-weight:800;color:#FFD700;letter-spacing:-0.5px}
+    .logo span{color:#fff}
+    .hero h1{font-size:36px;font-weight:800;line-height:1.2;letter-spacing:-1px;margin-bottom:16px}
+    .hero h1 span{color:#FFD700}
+    .hero p{font-size:15px;color:#555;line-height:1.7}
+    .features{margin-top:40px;display:flex;flex-direction:column;gap:16px}
+    .feature{display:flex;align-items:center;gap:14px}
+    .feature-icon{width:36px;height:36px;background:#1a1a1a;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;border:0.5px solid #222}
+    .feature-text{font-size:13px;color:#555;line-height:1.5}
+    .feature-text strong{color:#fff;display:block;margin-bottom:2px}
+    .left-footer{font-size:12px;color:#333}
+    .form-wrap{width:100%;max-width:420px}
+    .form-wrap h2{font-size:24px;font-weight:700;margin-bottom:6px;letter-spacing:-0.5px}
+    .form-wrap p{font-size:13px;color:#555;margin-bottom:28px}
+    .fg{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .fg label{font-size:11px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+    .fg input,.fg select{padding:13px 16px;background:#111;border:0.5px solid #222;border-radius:10px;font-size:14px;color:#fff;outline:none;transition:border-color 0.2s;font-family:inherit}
+    .fg input:focus,.fg select:focus{border-color:#FFD700}
+    .fg select option{background:#111}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .btn{width:100%;padding:14px;background:#FFD700;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}
+    .btn:hover{background:#FFC800;transform:translateY(-1px)}
+    .btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+    .divider{text-align:center;font-size:13px;color:#333;margin:16px 0}
+    .login-link{text-align:center;font-size:13px;color:#555}
+    .login-link a{color:#FFD700;text-decoration:none;font-weight:600}
+    .err{font-size:13px;color:#ff4444;margin-top:8px;display:none}
+    .success-msg{font-size:13px;color:#4CAF50;margin-top:8px;display:none}
+    @media(max-width:768px){
+      body{flex-direction:column}
+      .left{width:100%;padding:30px;border-right:none;border-bottom:0.5px solid #1a1a1a}
+      .hero h1{font-size:24px}
+      .features{display:none}
+      .right{padding:30px}
+      .row2{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT SIDE -->
+  <div class="left">
+    <div>
+      <div class="logo">Wallet<span>Pass</span></div>
+    </div>
+    <div>
+      <div class="hero">
+        <h1>Loyalty cards your customers <span>actually use</span></h1>
+        <p>Give your customers a digital stamp card that lives in their Apple or Google Wallet. No app needed.</p>
+      </div>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-icon">◆</div>
+          <div class="feature-text">
+            <strong>Digital Stamp Cards</strong>
+            Customers collect stamps with every visit — no paper needed
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">◎</div>
+          <div class="feature-text">
+            <strong>Lives in Apple & Google Wallet</strong>
+            Always on their phone, always accessible
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-text">
+            <strong>Instant Setup</strong>
+            Your card is ready in minutes — no technical skills needed
+          </div>
+        </div>
+        <div class="feature">
+          <div class="feature-icon">↗</div>
+          <div class="feature-text">
+            <strong>Share Anywhere</strong>
+            Send your card link via WhatsApp, email or SMS
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="left-footer">© 2026 WalletPass. All rights reserved.</div>
+  </div>
+
+  <!-- RIGHT SIDE — SIGNUP FORM -->
+  <div class="right">
+    <div class="form-wrap">
+      <h2>Create your account</h2>
+      <p>Start your free trial — no credit card required</p>
+
+      <div class="row2">
+        <div class="fg">
+          <label>First Name</label>
+          <input type="text" id="firstName" placeholder="John"/>
+        </div>
+        <div class="fg">
+          <label>Last Name</label>
+          <input type="text" id="lastName" placeholder="Adeyemi"/>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>Business Name</label>
+        <input type="text" id="bizName" placeholder="e.g. FitLife Gym"/>
+      </div>
+
+      <div class="fg">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="you@yourbusiness.com"/>
+      </div>
+
+      <div class="fg">
+        <label>Phone Number</label>
+        <input type="tel" id="phone" placeholder="+234 800 000 0000"/>
+      </div>
+
+      <div class="fg">
+        <label>Password</label>
+        <input type="password" id="password" placeholder="Minimum 6 characters"/>
+      </div>
+
+      <div class="fg">
+        <label>Business Type</label>
+        <select id="bizType">
+          <option value="">Select your business type</option>
+          <option value="cafe">Cafe / Coffee Shop</option>
+          <option value="restaurant">Restaurant</option>
+          <option value="gym">Gym / Fitness</option>
+          <option value="salon">Salon / Beauty</option>
+          <option value="retail">Retail Shop</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <button class="btn" id="signupBtn">Create Account</button>
+      <p class="err" id="errMsg"></p>
+      <p class="success-msg" id="successMsg"></p>
+
+      <div class="divider">Already have an account?</div>
+      <div class="login-link"><a href="/login">Sign in here</a></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBMOR53eRC_eafMewxKuiDRFSyzMyil5f0",
+      authDomain: "walletpass-admin.firebaseapp.com",
+      projectId: "walletpass-admin",
+      storageBucket: "walletpass-admin.firebasestorage.app",
+      messagingSenderId: "643004300341",
+      appId: "1:643004300341:web:4080b5a008d72d145e857c"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById('signupBtn').addEventListener('click', async function(){
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const bizName = document.getElementById('bizName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const bizType = document.getElementById('bizType').value;
+      const errMsg = document.getElementById('errMsg');
+      const successMsg = document.getElementById('successMsg');
+      const btn = document.getElementById('signupBtn');
+
+      errMsg.style.display = 'none';
+      successMsg.style.display = 'none';
+
+      if(!firstName || !lastName || !bizName || !email || !password){
+        errMsg.textContent = 'Please fill in all required fields!';
+        errMsg.style.display = 'block';
+        return;
+      }
+      if(password.length < 6){
+        errMsg.textContent = 'Password must be at least 6 characters!';
+        errMsg.style.display = 'block';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Creating account...';
+
+      try{
+        await createUserWithEmailAndPassword(auth, email, password);
+
+        const res = await fetch('/merchant/signup', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            businessName: bizName,
+            ownerName: firstName + ' ' + lastName,
+            email, phone, bizType,
+            status: 'active',
+            plan: 'starter',
+            createdAt: new Date().toISOString()
+          })
+        });
+
+        const data = await res.json();
+
+        if(data.success){
+          successMsg.textContent = 'Account created! Redirecting to your dashboard...';
+          successMsg.style.display = 'block';
+          localStorage.setItem('merchantId', data.merchantId);
+          localStorage.setItem('merchantBizName', bizName);
+          setTimeout(() => window.location.href = '/merchant-dashboard', 1500);
+        } else {
+          throw new Error(data.error || 'Failed to create account');
+        }
+      } catch(e){
+        errMsg.textContent = e.message.includes('email-already-in-use') ? 
+          'This email is already registered. Please login instead.' : 
+          'Error: ' + e.message;
+        errMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+      }
+    });
+  </script>
+</body>
+</html>
