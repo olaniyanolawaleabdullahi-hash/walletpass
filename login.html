@@ -85,9 +85,8 @@
         if(data.isMerchant){
           localStorage.setItem('merchantId', data.merchant.id);
           localStorage.setItem('merchantBizName', data.merchant.businessName);
+          localStorage.setItem('merchantCardType', data.merchant.cardType || 'stamp');
           window.location.href = '/merchant-dashboard';
-        } else {
-          window.location.href = '/dashboard';
         }
       } catch(error){
         errMsg.textContent = 'Invalid email or password!';

@@ -161,6 +161,10 @@ if(merchantId) {
 }
 
   <script>
+    const merchantId = localStorage.getItem('merchantId');
+if(merchantId) {
+  window.location.href = '/merchant-dashboard';
+}
     function logout() {
   if (confirm('Are you sure you want to logout?')) {
     window.location.href = '/login';

@@ -26,8 +26,6 @@
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
     .card{background:#111;border:0.5px solid #1a1a1a;border-radius:16px;padding:24px}
     .card-title{font-size:11px;font-weight:700;color:#FFD700;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid #1a1a1a;text-transform:uppercase;letter-spacing:0.08em}
-
-    /* STAMP CARD PREVIEW */
     .stamp-preview{border-radius:16px;padding:20px;position:relative;overflow:hidden;margin-bottom:16px}
     .stamp-preview::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.04)}
     .sp-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;position:relative;z-index:1}
@@ -36,18 +34,13 @@
     .sp-logo{width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800}
     .stamps-grid{display:grid;gap:8px;margin-bottom:16px;position:relative;z-index:1}
     .stamp{aspect-ratio:1;border-radius:8px;border:2px solid rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all 0.3s}
-    .stamp.filled{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.5)}
     .sp-bottom{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1)}
     .sp-visits{font-size:12px;font-weight:600}
     .sp-visits-sub{font-size:10px;opacity:0.5;margin-top:2px}
-
-    /* SHARE SECTION */
     .share-link-box{background:#0a0a0a;border:0.5px solid #222;border-radius:10px;padding:12px 16px;font-size:12px;color:#FFD700;word-break:break-all;margin-bottom:12px}
     .share-btns{display:flex;gap:8px;flex-wrap:wrap}
     .share-btn{padding:8px 16px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s}
     .share-btn:hover{opacity:0.9}
-
-    /* MEMBERS TABLE */
     .search-box{width:100%;padding:10px 14px;background:#0a0a0a;border:0.5px solid #222;border-radius:8px;font-size:13px;color:#fff;outline:none;margin-bottom:16px;font-family:inherit}
     .search-box:focus{border-color:#FFD700}
     table{width:100%;border-collapse:collapse;font-size:13px}
@@ -62,8 +55,6 @@
     .act-stamp{background:#0a2a0a;color:#4CAF50;border:0.5px solid #4CAF50}
     .act-delete{background:#2a0000;color:#ff4444;border:0.5px solid #ff4444}
     .completed-badge{background:#2a2000;color:#FFD700;border:0.5px solid #FFD700;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
-
-    /* SETUP CARD */
     .setup-card{background:#0a1a00;border:0.5px solid #1a3a00;border-radius:16px;padding:24px;margin-bottom:24px}
     .setup-title{font-size:14px;font-weight:700;color:#4CAF50;margin-bottom:8px}
     .setup-steps{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px}
@@ -71,13 +62,11 @@
     .setup-step.done{border-color:#4CAF50;color:#4CAF50}
     .setup-step-num{width:20px;height:20px;border-radius:50%;background:#222;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
     .setup-step.done .setup-step-num{background:#4CAF50;color:#000}
-
     .toast{position:fixed;top:24px;right:24px;padding:14px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateX(120px);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);max-width:320px}
     .toast.show{opacity:1;transform:translateX(0)}
     .toast.success{background:rgba(10,42,10,0.95);color:#4CAF50;border:0.5px solid #4CAF50}
     .toast.error{background:rgba(42,0,0,0.95);color:#ff4444;border:0.5px solid #ff4444}
     .toast.info{background:rgba(0,20,42,0.95);color:#4a9eff;border:0.5px solid #4a9eff}
-
     @media(max-width:768px){
       .stats{grid-template-columns:repeat(2,1fr);gap:10px}
       .grid2{grid-template-columns:1fr}
@@ -91,7 +80,7 @@
   <div class="topbar">
     <div class="topbar-left">
       <div class="logo">WalletPass</div>
-      <div class="biz-name" id="topBizName">My Business</div>
+      <div class="biz-name" id="topBizName">Loading...</div>
     </div>
     <div class="topbar-right">
       <a href="/checkin" class="btn-outline">Staff Check-in</a>
@@ -100,38 +89,22 @@
   </div>
 
   <div class="container">
-
-    <!-- WELCOME -->
     <div class="welcome">
-      <h1>Welcome, <span id="welcomeName">there</span>!</h1>
-      <p id="welcomeSub">Here's how your loyalty stamp card is performing.</p>
+      <h1>Welcome, <span id="welcomeName">...</span>!</h1>
+      <p>Here's how your loyalty card is performing.</p>
     </div>
 
-    <!-- SETUP CHECKLIST -->
-    <div class="setup-card" id="setupCard">
+    <div class="setup-card">
       <div class="setup-title">🚀 Get started — complete your setup</div>
-      <p style="font-size:13px;color:#4CAF50;opacity:0.7">Complete these steps to start sharing your stamp card with customers.</p>
+      <p style="font-size:13px;color:#4CAF50;opacity:0.7">Complete these steps to start sharing your card with customers.</p>
       <div class="setup-steps">
-        <div class="setup-step done" id="step1">
-          <div class="setup-step-num">1</div>
-          Create your account
-        </div>
-        <div class="setup-step" id="step2" onclick="location.href='/settings'" style="cursor:pointer">
-          <div class="setup-step-num">2</div>
-          Customize your card design
-        </div>
-        <div class="setup-step" id="step3" onclick="shareCard()" style="cursor:pointer">
-          <div class="setup-step-num">3</div>
-          Share card with customers
-        </div>
-        <div class="setup-step" id="step4">
-          <div class="setup-step-num">4</div>
-          Add your first stamp
-        </div>
+        <div class="setup-step done" id="step1"><div class="setup-step-num">1</div>Create your account</div>
+        <div class="setup-step" id="step2" onclick="location.href='/settings'" style="cursor:pointer"><div class="setup-step-num">2</div>Customize your card design</div>
+        <div class="setup-step" id="step3" onclick="copyCardLink()" style="cursor:pointer"><div class="setup-step-num">3</div>Share card with customers</div>
+        <div class="setup-step" id="step4"><div class="setup-step-num">4</div>Add your first stamp</div>
       </div>
     </div>
 
-    <!-- STATS -->
     <div class="stats">
       <div class="stat"><div class="stat-label">Total Members</div><div class="stat-value" id="totalMembers">0</div></div>
       <div class="stat"><div class="stat-label">Stamps Given</div><div class="stat-value" id="totalStamps">0</div></div>
@@ -140,18 +113,16 @@
     </div>
 
     <div class="grid2">
-
-      <!-- STAMP CARD PREVIEW -->
       <div>
         <div class="card">
-          <div class="card-title">Your Stamp Card</div>
+          <div class="card-title">Your Card</div>
           <div class="stamp-preview" id="cardPreview" style="background:#000">
             <div class="sp-top">
               <div>
-                <div class="sp-biz" id="pvBiz" style="color:#FFD700">My Business</div>
+                <div class="sp-biz" id="pvBiz" style="color:#FFD700">Loading...</div>
                 <div class="sp-reward" id="pvReward" style="color:rgba(255,215,0,0.5)">Collect stamps for a free reward!</div>
               </div>
-              <div class="sp-logo" id="pvLogo" style="color:#FFD700">M</div>
+              <div class="sp-logo" id="pvLogo" style="color:#FFD700">...</div>
             </div>
             <div class="stamps-grid" id="stampsGrid"></div>
             <div class="sp-bottom">
@@ -168,28 +139,25 @@
         </div>
       </div>
 
-      <!-- SHARE + QUICK ACTIONS -->
       <div>
         <div class="card" style="margin-bottom:16px">
           <div class="card-title">Share Your Card Link</div>
           <p style="font-size:13px;color:#444;margin-bottom:12px">Send this link to customers — they fill in their name and add the card to their wallet!</p>
-          <div class="share-link-box" id="cardLink">Generating link...</div>
+          <div class="share-link-box" id="cardLinkBox">Generating link...</div>
           <div class="share-btns">
             <button class="share-btn" style="background:#25D366;color:#fff" onclick="shareWhatsApp()">WhatsApp</button>
             <button class="share-btn" style="background:#0072C6;color:#fff" onclick="shareEmail()">Email</button>
             <button class="share-btn" style="background:#1a1a1a;color:#FFD700;border:0.5px solid #FFD700" onclick="copyCardLink()">Copy Link</button>
           </div>
         </div>
-
         <div class="card">
           <div class="card-title">Staff Check-in</div>
-          <p style="font-size:13px;color:#444;margin-bottom:16px">When a customer visits, scan their QR code to add a stamp to their card.</p>
+          <p style="font-size:13px;color:#444;margin-bottom:16px">When a customer visits, add a stamp to their card.</p>
           <a href="/checkin" style="display:block;width:100%;padding:14px;background:#FFD700;color:#000;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none">Open Check-in Scanner</a>
         </div>
       </div>
     </div>
 
-    <!-- MEMBERS TABLE -->
     <div class="card">
       <div class="card-title">Members</div>
       <input type="text" class="search-box" placeholder="Search by name or ID..." oninput="searchMembers(this.value)"/>
@@ -197,20 +165,12 @@
       <div style="overflow-x:auto">
         <table id="membersTable" style="display:none">
           <thead>
-            <tr>
-              <th>Name</th>
-              <th>Member ID</th>
-              <th>Stamps</th>
-              <th>Progress</th>
-              <th>Joined</th>
-              <th>Actions</th>
-            </tr>
+            <tr><th>Name</th><th>Member ID</th><th>Stamps</th><th>Progress</th><th>Joined</th><th>Actions</th></tr>
           </thead>
           <tbody id="membersBody"></tbody>
         </table>
       </div>
     </div>
-
   </div>
 
   <script>
@@ -222,43 +182,127 @@
       setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},3500);
     }
 
-    const merchantId = localStorage.getItem('merchantId') || '';
-    const bizName = localStorage.getItem('merchantBizName') || 'My Business';
-    const settings = JSON.parse(localStorage.getItem('wp-settings') || '{}');
-    const bg = settings.bg || '#000000';
-    const tc = settings.tc || '#FFD700';
-    const reward = settings.reward || 'free item';
-    const totalStampsConfig = parseInt(settings.stamps || '10');
+    function getCookie(name){
+      const value=`; ${document.cookie}`;
+      const parts=value.split(`; ${name}=`);
+      if(parts.length===2) return parts.pop().split(';').shift();
+      return '';
+    }
 
-    document.getElementById('topBizName').textContent = bizName;
-    document.getElementById('welcomeName').textContent = bizName;
+    let merchantId = '';
+    let bizName = 'My Business';
+    let cardType = 'stamp';
+    let cardUrl = '';
 
-    const baseUrl = 'https://walletpass-dp2j.onrender.com';
-    const cardUrl = `${baseUrl}/stampcard?b=${encodeURIComponent(bizName)}&bg=${encodeURIComponent(bg)}&tc=${encodeURIComponent(tc)}&reward=${encodeURIComponent(reward)}&stamps=${totalStampsConfig}&merchantId=${merchantId}`;
-    document.getElementById('cardLink').textContent = cardUrl;
+    const settings = JSON.parse(localStorage.getItem('wp-settings')||'{}');
+    const bg = settings.bg||'#000000';
+    const tc = settings.tc||'#FFD700';
+    const reward = settings.reward||'free item';
+    const totalStampsConfig = parseInt(settings.stamps||'10');
+    let allMembers = [];
+
+    async function initDashboard(){
+      try{
+        const res = await fetch('/merchant/me');
+        const data = await res.json();
+        if(data.success){
+          merchantId = data.merchant.id;
+          bizName = data.merchant.businessName;
+          cardType = data.merchant.cardType||'stamp';
+        } else {
+          bizName = localStorage.getItem('merchantBizName')||'My Business';
+          merchantId = localStorage.getItem('merchantId')||'';
+        }
+      } catch(e){
+        bizName = localStorage.getItem('merchantBizName')||'My Business';
+        merchantId = localStorage.getItem('merchantId')||'';
+      }
+
+      document.getElementById('topBizName').textContent = bizName;
+      document.getElementById('welcomeName').textContent = bizName;
+      document.getElementById('pvBiz').textContent = bizName;
+      document.getElementById('pvLogo').textContent = bizName.charAt(0).toUpperCase();
+      document.getElementById('pvReward').textContent = `Collect ${totalStampsConfig} stamps for a ${reward}!`;
+
+      cardUrl = `https://walletpass-dp2j.onrender.com/stampcard?b=${encodeURIComponent(bizName)}&bg=${encodeURIComponent(bg)}&tc=${encodeURIComponent(tc)}&reward=${encodeURIComponent(reward)}&stamps=${totalStampsConfig}&merchantId=${merchantId}`;
+      document.getElementById('cardLinkBox').textContent = cardUrl;
+
+      setupCardPreview();
+      loadMembers();
+    }
 
     function setupCardPreview(){
       document.getElementById('cardPreview').style.background = bg;
-      document.getElementById('pvBiz').textContent = bizName;
       document.getElementById('pvBiz').style.color = tc;
-      document.getElementById('pvReward').textContent = `Collect ${totalStampsConfig} stamps for a ${reward}!`;
-      document.getElementById('pvReward').style.color = tc + '80';
-      document.getElementById('pvLogo').textContent = bizName.charAt(0).toUpperCase();
+      document.getElementById('pvReward').style.color = tc+'80';
       document.getElementById('pvLogo').style.color = tc;
-      document.getElementById('pvVisits').textContent = `${totalStampsConfig} visits until ${reward}`;
       document.getElementById('pvVisits').style.color = tc;
 
-      const grid = document.getElementById('stampsGrid');
-      grid.innerHTML = '';
-      let cols = totalStampsConfig <= 6 ? 3 : totalStampsConfig <= 8 ? 4 : totalStampsConfig <= 10 ? 5 : 6;
-      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      if(cardType==='stamp') buildStampCard();
+      else if(cardType==='loyalty') buildLoyaltyCard();
+      else if(cardType==='membership') buildMembershipCard();
+      else if(cardType==='discount') buildDiscountCard();
+    }
+
+    function buildStampCard(){
+      const grid=document.getElementById('stampsGrid');
+      grid.innerHTML='';
+      let cols=totalStampsConfig<=6?3:totalStampsConfig<=8?4:totalStampsConfig<=10?5:6;
+      grid.style.gridTemplateColumns=`repeat(${cols},1fr)`;
       for(let i=0;i<totalStampsConfig;i++){
-        const s = document.createElement('div');
-        s.className = 'stamp';
-        s.style.borderColor = tc + '40';
-        s.innerHTML = `<span style="color:${tc}40;font-size:12px">◇</span>`;
+        const s=document.createElement('div');
+        s.className='stamp';
+        s.style.borderColor=tc+'40';
+        s.innerHTML=`<span style="color:${tc}40;font-size:12px">◇</span>`;
         grid.appendChild(s);
       }
+      document.getElementById('pvVisits').textContent=`${totalStampsConfig} visits until ${reward}`;
+    }
+
+    function buildLoyaltyCard(){
+      document.getElementById('stampsGrid').innerHTML=`
+        <div style="text-align:center;padding:10px 0">
+          <div style="font-size:11px;color:${tc}60;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Points Balance</div>
+          <div style="font-size:36px;font-weight:800;color:${tc};letter-spacing:-1px">0</div>
+          <div style="font-size:11px;color:${tc}60;margin-top:4px">points earned</div>
+        </div>
+        <div style="background:${tc}20;border-radius:8px;height:6px;margin:8px 0;overflow:hidden">
+          <div style="background:${tc};height:100%;width:0%;border-radius:8px"></div>
+        </div>
+        <div style="font-size:11px;color:${tc}60;text-align:center">Earn points with every purchase</div>`;
+      document.getElementById('pvVisits').textContent=`Earn points with every visit`;
+    }
+
+    function buildMembershipCard(){
+      document.getElementById('stampsGrid').innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+          <div>
+            <div style="font-size:10px;color:${tc}60;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Member Since</div>
+            <div style="font-size:14px;font-weight:700;color:${tc}">${new Date().getFullYear()}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:10px;color:${tc}60;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Status</div>
+            <div style="font-size:14px;font-weight:700;color:${tc}">Gold Member</div>
+          </div>
+        </div>
+        <div style="background:${tc}15;border-radius:10px;padding:10px;margin-top:8px;text-align:center">
+          <div style="font-size:10px;color:${tc}60;margin-bottom:4px">MEMBER BENEFITS</div>
+          <div style="font-size:12px;color:${tc}80">Priority access • Exclusive offers • Special events</div>
+        </div>`;
+      document.getElementById('pvVisits').textContent=`Exclusive member benefits`;
+    }
+
+    function buildDiscountCard(){
+      document.getElementById('stampsGrid').innerHTML=`
+        <div style="text-align:center;padding:10px 0">
+          <div style="font-size:11px;color:${tc}60;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Your Discount</div>
+          <div style="font-size:52px;font-weight:800;color:${tc};letter-spacing:-2px;line-height:1">10%</div>
+          <div style="font-size:11px;color:${tc}60;margin-top:4px">OFF every purchase</div>
+        </div>
+        <div style="background:${tc}15;border-radius:10px;padding:8px;margin-top:8px;text-align:center">
+          <div style="font-size:11px;color:${tc}80">Show this card at checkout to redeem</div>
+        </div>`;
+      document.getElementById('pvVisits').textContent=`Show at checkout for discount`;
     }
 
     function copyCardLink(){
@@ -266,89 +310,68 @@
       toast('Card link copied!');
     }
 
-    function shareCard(){ copyCardLink(); }
-
     function shareWhatsApp(){
-      const msg = `Hi! Here's your ${bizName} loyalty stamp card. Add it to your wallet and collect stamps with every visit: ${cardUrl}`;
-      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+      const msg=`Hi! Here's your ${bizName} loyalty card. Add it to your wallet: ${cardUrl}`;
+      window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
     }
 
     function shareEmail(){
-      const subject = `Your ${bizName} Loyalty Stamp Card`;
-      const body = `Hi!\n\nHere's your ${bizName} loyalty stamp card:\n\n${cardUrl}\n\nCollect ${totalStampsConfig} stamps and get a ${reward}!\n\nThank you for your loyalty!`;
-      window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      const subject=`Your ${bizName} Loyalty Card`;
+      const body=`Hi!\n\nHere's your ${bizName} loyalty card:\n\n${cardUrl}\n\nThank you!`;
+      window.location.href=`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
-
-    let allMembers = [];
 
     async function loadMembers(){
       try{
-        const res = await fetch(`/members?merchantId=${merchantId}`);
-        allMembers = await res.json();
-
-        let totalStampsGiven = 0;
-        let totalRewards = 0;
-        const thisMonthStart = new Date();
-        thisMonthStart.setDate(1);
-        thisMonthStart.setHours(0,0,0,0);
-        let thisMonthCount = 0;
-
-        allMembers.forEach(m => {
-          const stamps = m.stampsCollected || 0;
-          const total = m.totalStamps || totalStampsConfig;
-          totalStampsGiven += stamps;
-          if(stamps >= total) totalRewards++;
-          if(m.registeredAt && new Date(m.registeredAt) > thisMonthStart) thisMonthCount++;
+        const res=await fetch(`/members?merchantId=${merchantId}`);
+        allMembers=await res.json();
+        let totalStampsGiven=0,totalRewards=0,thisMonthCount=0;
+        const thisMonthStart=new Date();thisMonthStart.setDate(1);thisMonthStart.setHours(0,0,0,0);
+        allMembers.forEach(m=>{
+          const stamps=m.stampsCollected||0;
+          const total=m.totalStamps||totalStampsConfig;
+          totalStampsGiven+=stamps;
+          if(stamps>=total) totalRewards++;
+          if(m.registeredAt&&new Date(m.registeredAt)>thisMonthStart) thisMonthCount++;
         });
-
-        document.getElementById('totalMembers').textContent = allMembers.length;
-        document.getElementById('totalStamps').textContent = totalStampsGiven;
-        document.getElementById('totalRewards').textContent = totalRewards;
-        document.getElementById('thisMonth').textContent = thisMonthCount;
-
-        if(allMembers.length > 0){
+        document.getElementById('totalMembers').textContent=allMembers.length;
+        document.getElementById('totalStamps').textContent=totalStampsGiven;
+        document.getElementById('totalRewards').textContent=totalRewards;
+        document.getElementById('thisMonth').textContent=thisMonthCount;
+        if(allMembers.length>0){
           document.getElementById('step3').classList.add('done');
-          document.getElementById('step3').querySelector('.setup-step-num').style.background = '#4CAF50';
-          document.getElementById('step3').querySelector('.setup-step-num').style.color = '#000';
+          document.getElementById('step3').querySelector('.setup-step-num').style.cssText='background:#4CAF50;color:#000';
         }
-        if(totalStampsGiven > 0){
+        if(totalStampsGiven>0){
           document.getElementById('step4').classList.add('done');
-          document.getElementById('step4').querySelector('.setup-step-num').style.background = '#4CAF50';
-          document.getElementById('step4').querySelector('.setup-step-num').style.color = '#000';
+          document.getElementById('step4').querySelector('.setup-step-num').style.cssText='background:#4CAF50;color:#000';
         }
-
         renderMembers(allMembers);
       } catch(e){
-        document.getElementById('loadingMsg').textContent = 'Error loading members!';
+        document.getElementById('loadingMsg').textContent='Error loading members!';
       }
     }
 
     function renderMembers(members){
-      const tbody = document.getElementById('membersBody');
-      tbody.innerHTML = '';
-
-      if(members.length === 0){
-        document.getElementById('loadingMsg').textContent = 'No members yet. Share your card link to get started!';
-        document.getElementById('loadingMsg').style.display = 'block';
+      const tbody=document.getElementById('membersBody');
+      tbody.innerHTML='';
+      if(members.length===0){
+        document.getElementById('loadingMsg').textContent='No members yet. Share your card link to get started!';
+        document.getElementById('loadingMsg').style.display='block';
         return;
       }
-
-      members.forEach(m => {
-        const stamps = m.stampsCollected || 0;
-        const total = m.totalStamps || totalStampsConfig;
-        const completed = stamps >= total;
-        const date = m.registeredAt ? new Date(m.registeredAt).toLocaleDateString() : 'N/A';
-
-        let progressDots = '';
-        for(let i=0;i<Math.min(total,10);i++){
-          progressDots += `<div class="sp-dot ${i<stamps?'done':''}"></div>`;
-        }
-
-        tbody.innerHTML += `<tr>
+      members.forEach(m=>{
+        const stamps=m.stampsCollected||0;
+        const total=m.totalStamps||totalStampsConfig;
+        const completed=stamps>=total;
+        const date=m.registeredAt?new Date(m.registeredAt).toLocaleDateString():'N/A';
+        let dots='';
+        for(let i=0;i<Math.min(total,10);i++) dots+=`<div class="sp-dot ${i<stamps?'done':''}"></div>`;
+        tbody.innerHTML+=`<tr>
           <td style="color:#fff;font-weight:500">${m.name}</td>
           <td style="font-size:11px;color:#555">${m.memberId}</td>
           <td>${stamps}/${total} ${completed?'<span class="completed-badge">✓ Reward!</span>':''}</td>
-          <td><div class="stamp-progress">${progressDots}</div></td>
+          <td><div class="stamp-progress">${dots}</div></td>
           <td style="font-size:11px;color:#555">${date}</td>
           <td>
             <button class="act-btn act-stamp" onclick="addStamp('${m.id}','${m.name}',${stamps},${total})">+ Stamp</button>
@@ -356,62 +379,40 @@
           </td>
         </tr>`;
       });
-
-      document.getElementById('loadingMsg').style.display = 'none';
-      document.getElementById('membersTable').style.display = 'table';
+      document.getElementById('loadingMsg').style.display='none';
+      document.getElementById('membersTable').style.display='table';
     }
 
     function searchMembers(term){
-      const filtered = allMembers.filter(m =>
-        m.name.toLowerCase().includes(term.toLowerCase()) ||
+      renderMembers(allMembers.filter(m=>
+        m.name.toLowerCase().includes(term.toLowerCase())||
         m.memberId.toLowerCase().includes(term.toLowerCase())
-      );
-      renderMembers(filtered);
+      ));
     }
 
-    async function addStamp(memberId, name, currentStamps, totalStamps){
-      if(currentStamps >= totalStamps){
-        toast(`${name} has completed their card! Give them their ${reward}!`, 'info');
-        return;
-      }
+    async function addStamp(memberId,name,currentStamps,totalStamps){
+      if(currentStamps>=totalStamps){toast(`${name} completed their card!`,'info');return;}
       try{
-        const res = await fetch('/members/update', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({ memberId, updatedData: { stampsCollected: currentStamps + 1 } })
-        });
-        const data = await res.json();
+        const res=await fetch('/members/update',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId,updatedData:{stampsCollected:currentStamps+1}})});
+        const data=await res.json();
         if(data.success){
-          const remaining = totalStamps - (currentStamps + 1);
-          if(remaining === 0){
-            toast(`🎉 ${name} completed their card! Give them their ${reward}!`, 'success');
-          } else {
-            toast(`Stamp added for ${name}! ${remaining} more to go.`, 'success');
-          }
+          const remaining=totalStamps-(currentStamps+1);
+          toast(remaining===0?`🎉 ${name} completed their card! Give them their ${reward}!`:`Stamp added for ${name}! ${remaining} more to go.`,'success');
           loadMembers();
         }
-      } catch(e){
-        toast('Error adding stamp!', 'error');
-      }
+      } catch(e){toast('Error adding stamp!','error');}
     }
 
-    async function deleteMember(memberId, name){
+    async function deleteMember(memberId,name){
       if(!confirm(`Delete ${name}?`)) return;
       try{
-        const res = await fetch('/members/delete', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({memberId})
-        });
-        const data = await res.json();
+        const res=await fetch('/members/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({memberId})});
+        const data=await res.json();
         if(data.success){toast(`${name} deleted!`);loadMembers();}
-      } catch(e){
-        toast('Error deleting!', 'error');
-      }
+      } catch(e){toast('Error deleting!','error');}
     }
 
-    setupCardPreview();
-    loadMembers();
+    initDashboard();
   </script>
 </body>
 </html>

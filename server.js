@@ -7,6 +7,8 @@ const app = express();
 const port = 3000;
 
 app.use(express.json());
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 
 // MAIN PAGES
 app.get('/', (req, res) => res.sendFile(path.resolve('dashboard.html')));
@@ -41,12 +43,31 @@ app.post('/auth/check-merchant', async (req, res) => {
     const { email } = req.body;
     const merchant = await getMerchantByEmail(email);
     if (merchant) {
+      res.cookie('merchantId', merchant.id, { maxAge: 24*60*60*1000 });
+      res.cookie('merchantBizName', merchant.businessName, { maxAge: 24*60*60*1000 });
+      res.cookie('merchantCardType', merchant.cardType || 'stamp', { maxAge: 24*60*60*1000 });
       res.json({ isMerchant: true, merchant });
     } else {
       res.json({ isMerchant: false });
     }
   } catch (error) {
     res.json({ isMerchant: false });
+  }
+});
+
+app.get('/merchant/me', async (req, res) => {
+  try {
+    const merchantId = req.cookies.merchantId;
+    if(!merchantId) return res.json({ success: false });
+    const merchants = await getAllMerchants();
+    const merchant = merchants.find(m => m.id === merchantId);
+    if(merchant){
+      res.json({ success: true, merchant });
+    } else {
+      res.json({ success: false });
+    }
+  } catch(error){
+    res.json({ success: false });
   }
 });
 

@@ -142,6 +142,15 @@
           <option value="other">Other</option>
         </select>
       </div>
+      <div class="fg">
+        <label>Card Type</label>
+        <select id="cardType">
+          <option value="stamp">Stamp Card — Collect stamps, earn rewards</option>
+          <option value="loyalty">Loyalty Card — Earn points on purchases</option>
+          <option value="membership">Membership Card — VIP member access</option>
+          <option value="discount">Discount Card — Fixed % discount</option>
+        </select>
+      </div>
 
       <button class="btn" id="signupBtn">Create Account</button>
       <p class="err" id="errMsg"></p>
@@ -212,7 +221,15 @@
             createdAt: new Date().toISOString()
           })
         });
-
+body: JSON.stringify({
+            businessName: bizName,
+            ownerName: firstName + ' ' + lastName,
+            email, phone, bizType,
+            cardType: document.getElementById('cardType').value,
+            status: 'active',
+            plan: 'starter',
+            createdAt: new Date().toISOString()
+          })
         const data = await res.json();
 
         if(data.success){
