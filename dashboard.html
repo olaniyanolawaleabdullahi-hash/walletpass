@@ -146,6 +146,16 @@
       </a>
     </div>
 
+    <!-- SIGNUP LINK -->
+    <div class="recent-card" style="margin-bottom:24px">
+      <div class="card-title">Your Customer Sign-up Link</div>
+      <p style="font-size:12px;color:#444;margin-bottom:12px">Share this link with customers so they can add your loyalty card to their wallet.</p>
+      <div style="display:flex;align-items:center;gap:10px;background:#0a0a0a;border:0.5px solid #222;border-radius:10px;padding:12px 16px;">
+        <a id="signupLink" href="#" target="_blank" style="font-size:13px;color:#FFD700;flex:1;word-break:break-all;text-decoration:none;">Loading...</a>
+        <button id="copyLinkBtn" style="background:#1a1a1a;border:0.5px solid #333;color:#FFD700;padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer;white-space:nowrap;">Copy</button>
+      </div>
+    </div>
+
     <!-- RECENT MEMBERS -->
     <div class="recent-card">
       <div class="card-title">Recent Members</div>
@@ -165,72 +175,100 @@ if(merchantId) {
 if(merchantId) {
   window.location.href = '/merchant-dashboard';
 }
-    function logout() {
+
+function logout() {
   if (confirm('Are you sure you want to logout?')) {
     window.location.href = '/login';
   }
 }
-    function showToast(message, type = 'success') {
-      const existing = document.querySelector('.toast');
-      if (existing) existing.remove();
-      
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      
-      setTimeout(() => toast.classList.add('show'), 10);
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-    function openSidebar() {
-      document.getElementById('sidebar').classList.add('open');
-      document.getElementById('overlay').classList.add('show');
-    }
-    function closeSidebar() {
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('overlay').classList.remove('show');
-    }
 
-    async function loadDashboard() {
-      try {
-        const response = await fetch('/members');
-        const members = await response.json();
+function showToast(message, type = 'success') {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => toast.classList.add('show'), 10);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
 
-        let goldCount = 0, silverCount = 0, bronzeCount = 0;
-        members.forEach(m => {
-          if (m.loyaltyStatus === 'Gold Member') goldCount++;
-          if (m.loyaltyStatus === 'Silver Member') silverCount++;
-          if (m.loyaltyStatus === 'Bronze Member') bronzeCount++;
-        });
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
 
-        document.getElementById('totalCards').textContent = members.length;
-        document.getElementById('totalGold').textContent = goldCount;
-        document.getElementById('totalSilver').textContent = silverCount;
-        document.getElementById('totalBronze').textContent = bronzeCount;
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
 
-        const recentList = document.getElementById('recentList');
-        const recent = members.slice(-5).reverse();
-        recent.forEach(member => {
-          const badgeClass = member.loyaltyStatus === 'Gold Member' ? 'badge-gold' :
-                            member.loyaltyStatus === 'Silver Member' ? 'badge-silver' : 'badge-bronze';
-          recentList.innerHTML += `
-            <div class="member-row">
-              <div>
-                <div class="member-name">${member.name}</div>
-                <div class="member-id">${member.memberId}</div>
-              </div>
-              <span class="badge ${badgeClass}">${member.loyaltyStatus}</span>
-            </div>`;
-        });
-      } catch (error) {
-        document.getElementById('loadingMsg').textContent = 'Error loading data!';
+async function loadSignupLink() {
+  try {
+    const res = await fetch('/merchant/me');
+    const data = await res.json();
+    if(data.success && data.merchant) {
+      const slug = data.merchant.businessName.toLowerCase().replace(/\s+/g, '-');
+      const link = `${window.location.origin}/c/${slug}`;
+      const linkEl = document.getElementById('signupLink');
+      if(linkEl) {
+        linkEl.href = link;
+        linkEl.textContent = link;
+      }
+      const copyEl = document.getElementById('copyLinkBtn');
+      if(copyEl) {
+        copyEl.onclick = () => {
+          navigator.clipboard.writeText(link);
+          showToast('Sign-up link copied!');
+        };
       }
     }
+  } catch(e) {}
+}
 
-    loadDashboard();
+async function loadDashboard() {
+  try {
+    const response = await fetch('/members');
+    const members = await response.json();
+
+    let goldCount = 0, silverCount = 0, bronzeCount = 0;
+    members.forEach(m => {
+      if (m.loyaltyStatus === 'Gold Member') goldCount++;
+      if (m.loyaltyStatus === 'Silver Member') silverCount++;
+      if (m.loyaltyStatus === 'Bronze Member') bronzeCount++;
+    });
+
+    document.getElementById('totalCards').textContent = members.length;
+    document.getElementById('totalGold').textContent = goldCount;
+    document.getElementById('totalSilver').textContent = silverCount;
+    document.getElementById('totalBronze').textContent = bronzeCount;
+
+    const recentList = document.getElementById('recentList');
+    const recent = members.slice(-5).reverse();
+    recent.forEach(member => {
+      const badgeClass = member.loyaltyStatus === 'Gold Member' ? 'badge-gold' :
+                        member.loyaltyStatus === 'Silver Member' ? 'badge-silver' : 'badge-bronze';
+      recentList.innerHTML += `
+        <div class="member-row">
+          <div>
+            <div class="member-name">${member.name}</div>
+            <div class="member-id">${member.memberId}</div>
+          </div>
+          <span class="badge ${badgeClass}">${member.loyaltyStatus}</span>
+        </div>`;
+    });
+  } catch (error) {
+    document.getElementById('loadingMsg').textContent = 'Error loading data!';
+  }
+}
+
+loadDashboard();
+loadSignupLink();
   </script>
 </body>
 </html>

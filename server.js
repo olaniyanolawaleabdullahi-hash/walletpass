@@ -1,14 +1,36 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { generatePass } = require('./generatePass');
 const { addMember, getAllMembers, updateMember, addMerchant, getAllMerchants, getMerchantByEmail } = require('./firebase');
 const { generateGoogleWalletLink } = require('./googleWallet');
+const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
 const app = express();
 const port = 3000;
+const COOKIE_SECRET = process.env.COOKIE_SECRET || 'change-this-in-production';
+const JWT_SECRET = process.env.JWT_SECRET || 'change-this-in-production';
+
+function generateStampToken(memberId, businessId) {
+  return jwt.sign(
+    { memberId, businessId, nonce: uuidv4() },
+    JWT_SECRET,
+    { expiresIn: '5m' }
+  );
+}
+
+function verifyStampToken(token) {
+  try {
+    return jwt.verify(token, JWT_SECRET);
+  } catch(e) {
+    return null;
+  }
+}
 
 app.use(express.json());
-const cookieParser = require('cookie-parser');
-app.use(cookieParser());
+app.use(cookieParser(COOKIE_SECRET));
 
 // MAIN PAGES
 app.get('/', (req, res) => res.sendFile(path.resolve('dashboard.html')));
@@ -22,30 +44,55 @@ app.get('/settings', (req, res) => res.sendFile(path.resolve('settings.html')));
 app.get('/superadmin', (req, res) => res.sendFile(path.resolve('superadmin.html')));
 app.get('/stampcard', (req, res) => res.sendFile(path.resolve('stampcard.html')));
 app.get('/checkin', (req, res) => res.sendFile(path.resolve('checkin.html')));
+app.get('/card-setup', (req, res) => res.sendFile(path.resolve('card-setup.html')));
+app.get('/c/:slug', (req, res) => res.sendFile(path.resolve('signup.html')));
 
+// STAMP CHECKIN
 app.post('/members/checkin', async (req, res) => {
   try {
-    const { memberId } = req.body;
+    const { token } = req.body;
+
+    const decoded = verifyStampToken(token);
+    if(!decoded) return res.status(401).json({ error: 'Invalid or expired QR code. Please refresh the customer card.' });
+
+    const memberId = decoded.memberId;
     const members = await getAllMembers();
     const member = members.find(m => m.memberId === memberId);
     if(!member) return res.status(404).json({ error: 'Member not found' });
+
+    const FIVE_MINUTES = 5 * 60 * 1000;
+    const lastStamp = member.lastStampAt ? new Date(member.lastStampAt).getTime() : 0;
+    const now = Date.now();
+    if(now - lastStamp < FIVE_MINUTES) {
+      const secondsLeft = Math.ceil((FIVE_MINUTES - (now - lastStamp)) / 1000);
+      return res.status(429).json({ error: `Too soon. Please wait ${secondsLeft} seconds before stamping again.` });
+    }
+
     const newStamps = (member.stampsCollected || 0) + 1;
-    await updateMember(member.id, { stampsCollected: newStamps });
+    await updateMember(member.id, { stampsCollected: newStamps, lastStampAt: new Date().toISOString() });
     const completed = newStamps >= (member.totalStamps || 10);
     res.json({ success: true, stampsCollected: newStamps, totalStamps: member.totalStamps || 10, completed, memberName: member.name });
   } catch(error){
     res.status(500).json({ error: 'Failed to add stamp' });
   }
 });
+
 // AUTH
 app.post('/auth/check-merchant', async (req, res) => {
   try {
     const { email } = req.body;
     const merchant = await getMerchantByEmail(email);
     if (merchant) {
-      res.cookie('merchantId', merchant.id, { maxAge: 24*60*60*1000 });
-      res.cookie('merchantBizName', merchant.businessName, { maxAge: 24*60*60*1000 });
-      res.cookie('merchantCardType', merchant.cardType || 'stamp', { maxAge: 24*60*60*1000 });
+      const cookieOpts = {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        signed: true
+      };
+      res.cookie('merchantId',       merchant.id,                  cookieOpts);
+      res.cookie('merchantBizName',  merchant.businessName,        cookieOpts);
+      res.cookie('merchantCardType', merchant.cardType || 'stamp', cookieOpts);
       res.json({ isMerchant: true, merchant });
     } else {
       res.json({ isMerchant: false });
@@ -55,9 +102,27 @@ app.post('/auth/check-merchant', async (req, res) => {
   }
 });
 
+// MERCHANT SLUG (public sign-up page)
+app.get('/merchant/slug/:slug', async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const merchants = await getAllMerchants();
+    const merchant = merchants.find(m =>
+      m.businessName?.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()
+    );
+    if(merchant) {
+      res.json({ success: true, merchant });
+    } else {
+      res.json({ success: false });
+    }
+  } catch(error) {
+    res.json({ success: false });
+  }
+});
+
 app.get('/merchant/me', async (req, res) => {
   try {
-    const merchantId = req.cookies.merchantId;
+    const merchantId = req.signedCookies.merchantId;
     if(!merchantId) return res.json({ success: false });
     const merchants = await getAllMerchants();
     const merchant = merchants.find(m => m.id === merchantId);
@@ -163,9 +228,8 @@ app.post('/members/update', async (req, res) => {
 app.post('/register/stampcard', async (req, res) => {
   try {
     const { name, email, phone, businessName, merchantId, reward, totalStamps, walletType, bgColor, textColor } = req.body;
-    const members = await getAllMembers();
-    const nextNumber = String(members.length + 1).padStart(3, '0');
-    const memberId = `STAMP${nextNumber}`;
+    const memberId = `STAMP-${uuidv4().split('-')[0].toUpperCase()}`;
+    const stampToken = generateStampToken(memberId, merchantId || 'default');
     const memberData = {
       name, email, phone: phone||'', memberId,
       merchantId: merchantId||'',
@@ -177,6 +241,7 @@ app.post('/register/stampcard', async (req, res) => {
       bgColor: bgColor||'#000000',
       textColor: textColor||'#FFD700',
       expiryDate: '12/2027',
+      stampToken,
       registeredAt: new Date().toISOString()
     };
     await addMember(memberData);

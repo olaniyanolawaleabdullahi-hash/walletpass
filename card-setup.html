@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WalletPass — Card Setup</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',Arial,sans-serif;background:#0a0a0a;color:#fff;min-height:100vh}
+    .topbar{background:#000;border-bottom:0.5px solid #1a1a1a;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+    .logo{font-size:18px;font-weight:800;color:#FFD700}
+    .biz-name{font-size:14px;color:#555}
+    .topbar-right{display:flex;align-items:center;gap:12px}
+    .btn-back{padding:8px 16px;background:transparent;color:#FFD700;border:0.5px solid #FFD700;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none}
+    .logout-btn{padding:8px 16px;background:transparent;color:#ff4444;border:0.5px solid #ff4444;border-radius:20px;font-size:12px;cursor:pointer}
+    .container{max-width:900px;margin:0 auto;padding:32px 24px}
+    .page-title{font-size:24px;font-weight:700;color:#FFD700;margin-bottom:6px}
+    .page-sub{font-size:14px;color:#444;margin-bottom:32px}
+    .section{background:#111;border:0.5px solid #1a1a1a;border-radius:16px;padding:24px;margin-bottom:20px}
+    .section-title{font-size:13px;font-weight:700;color:#FFD700;margin-bottom:16px;padding-bottom:12px;border-bottom:0.5px solid #1a1a1a;text-transform:uppercase;letter-spacing:0.08em}
+    .fg{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+    .fg label{font-size:11px;color:#555;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+    .fg input,.fg select,.fg textarea{padding:12px 14px;background:#0a0a0a;border:0.5px solid #222;border-radius:10px;font-size:14px;color:#fff;outline:none;transition:border-color 0.2s;font-family:inherit}
+    .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:#FFD700}
+    .fg select option{background:#111}
+    .fg textarea{resize:vertical;min-height:80px}
+    .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .stamp-selector{display:flex;gap:8px;flex-wrap:wrap}
+    .stamp-opt{width:44px;height:44px;border-radius:10px;background:#0a0a0a;border:0.5px solid #222;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;color:#555}
+    .stamp-opt:hover{border-color:#FFD700;color:#FFD700}
+    .stamp-opt.selected{background:#FFD700;color:#000;border-color:#FFD700}
+    .notification-card{background:#0a0a0a;border:0.5px solid #222;border-radius:12px;padding:16px;margin-bottom:12px}
+    .notif-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .notif-title{font-size:13px;font-weight:600;color:#fff}
+    .notif-badge{font-size:11px;padding:3px 10px;border-radius:20px;background:#2a2000;color:#FFD700;border:0.5px solid #FFD700}
+    .toggle{width:44px;height:24px;background:#222;border-radius:12px;position:relative;cursor:pointer;transition:background 0.2s;flex-shrink:0}
+    .toggle.on{background:#FFD700}
+    .toggle::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left 0.2s}
+    .toggle.on::after{left:23px;background:#000}
+    .channel-select{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .channel-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:0.5px solid #333;background:#111;color:#555;transition:all 0.2s}
+    .channel-btn.active{border-color:#FFD700;color:#FFD700;background:#1a1500}
+    .btn-save{width:100%;padding:14px;background:#FFD700;color:#000;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:8px}
+    .btn-save:hover{background:#FFC800}
+    .toast{position:fixed;top:24px;right:24px;padding:14px 20px;border-radius:12px;font-size:13px;font-weight:500;z-index:9999;opacity:0;transform:translateX(120px);transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);max-width:320px}
+    .toast.show{opacity:1;transform:translateX(0)}
+    .toast.success{background:rgba(10,42,10,0.95);color:#4CAF50;border:0.5px solid #4CAF50}
+    .toast.error{background:rgba(42,0,0,0.95);color:#ff4444;border:0.5px solid #ff4444}
+    @media(max-width:768px){.row2{grid-template-columns:1fr}.container{padding:16px}}
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="logo">WalletPass</div>
+    <div class="biz-name" id="topBizName">My Business</div>
+  </div>
+  <div class="topbar-right">
+    <a href="/merchant-dashboard" class="btn-back">← Dashboard</a>
+    <button class="logout-btn" onclick="location.href='/login'">Logout</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="page-title">Card Terms & Features</div>
+  <div class="page-sub">Set up your card rules, rewards and customer notifications</div>
+
+  <!-- STAMP SETTINGS -->
+  <div class="section">
+    <div class="section-title">Stamp Card Settings</div>
+    <div class="fg">
+      <label>How many stamps to earn a reward?</label>
+      <div class="stamp-selector" id="stampSelector"></div>
+    </div>
+    <div class="row2">
+      <div class="fg">
+        <label>What is the reward?</label>
+        <input type="text" id="rewardText" placeholder="e.g. Free coffee, 50% off, Free dessert"/>
+      </div>
+      <div class="fg">
+        <label>Card Expiry</label>
+        <select id="cardExpiry">
+          <option value="never">Never expires</option>
+          <option value="6months">6 months</option>
+          <option value="1year">1 year</option>
+          <option value="2years">2 years</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Bonus stamps (optional)</label>
+      <select id="bonusStamps">
+        <option value="0">No bonus stamps</option>
+        <option value="1">Give 1 extra stamp if used within 7 days</option>
+        <option value="2">Give 2 extra stamps if used within 7 days</option>
+        <option value="3">Give 3 extra stamps if used within 7 days</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- NOTIFICATIONS -->
+  <div class="section">
+    <div class="section-title">Customer Notifications (If-Then Logic)</div>
+    <p style="font-size:13px;color:#444;margin-bottom:16px">Set up automatic messages sent to customers based on their stamp progress.</p>
+
+    <!-- HALFWAY NOTIFICATION -->
+    <div class="notification-card">
+      <div class="notif-header">
+        <div>
+          <div class="notif-title">Halfway Milestone</div>
+          <div style="font-size:12px;color:#444;margin-top:3px">When customer reaches halfway to their reward</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="notif-badge" id="halfwayBadge">At 5 stamps</span>
+          <div class="toggle" id="halfwayToggle" onclick="toggleNotif('halfway')"></div>
+        </div>
+      </div>
+      <div id="halfwayConfig" style="display:none">
+        <div class="fg">
+          <label>Message to customer</label>
+          <textarea id="halfwayMsg" placeholder="e.g. You're halfway there! Keep visiting us to earn your free reward."></textarea>
+        </div>
+        <div class="fg">
+          <label>Send via</label>
+          <div class="channel-select">
+            <div class="channel-btn" id="halfway-whatsapp" onclick="toggleChannel('halfway','whatsapp')">WhatsApp</div>
+            <div class="channel-btn" id="halfway-email" onclick="toggleChannel('halfway','email')">Email</div>
+            <div class="channel-btn" id="halfway-sms" onclick="toggleChannel('halfway','sms')">SMS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLETION NOTIFICATION -->
+    <div class="notification-card">
+      <div class="notif-header">
+        <div>
+          <div class="notif-title">Reward Completed!</div>
+          <div style="font-size:12px;color:#444;margin-top:3px">When customer collects all stamps</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="notif-badge" id="completeBadge">At 10 stamps</span>
+          <div class="toggle on" id="completeToggle" onclick="toggleNotif('complete')"></div>
+        </div>
+      </div>
+      <div id="completeConfig">
+        <div class="fg">
+          <label>Message to customer</label>
+          <textarea id="completeMsg" placeholder="e.g. 🎉 Congratulations! You've earned your free reward! Show this message at the counter."></textarea>
+        </div>
+        <div class="fg">
+          <label>Send via</label>
+          <div class="channel-select">
+            <div class="channel-btn active" id="complete-whatsapp" onclick="toggleChannel('complete','whatsapp')">WhatsApp</div>
+            <div class="channel-btn" id="complete-email" onclick="toggleChannel('complete','email')">Email</div>
+            <div class="channel-btn" id="complete-sms" onclick="toggleChannel('complete','sms')">SMS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WIN BACK NOTIFICATION -->
+    <div class="notification-card">
+      <div class="notif-header">
+        <div>
+          <div class="notif-title">Win-Back Message</div>
+          <div style="font-size:12px;color:#444;margin-top:3px">When customer hasn't visited in 30 days</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="notif-badge" style="background:#1a0a1a;color:#c77dff;border-color:#c77dff">After 30 days</span>
+          <div class="toggle" id="winbackToggle" onclick="toggleNotif('winback')"></div>
+        </div>
+      </div>
+      <div id="winbackConfig" style="display:none">
+        <div class="fg">
+          <label>Message to customer</label>
+          <textarea id="winbackMsg" placeholder="e.g. We miss you! Come back and continue collecting your stamps towards a free reward."></textarea>
+        </div>
+        <div class="fg">
+          <label>Send via</label>
+          <div class="channel-select">
+            <div class="channel-btn" id="winback-whatsapp" onclick="toggleChannel('winback','whatsapp')">WhatsApp</div>
+            <div class="channel-btn" id="winback-email" onclick="toggleChannel('winback','email')">Email</div>
+            <div class="channel-btn" id="winback-sms" onclick="toggleChannel('winback','sms')">SMS</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD RULES -->
+  <div class="section">
+    <div class="section-title">Card Rules</div>
+    <div class="row2">
+      <div class="fg">
+        <label>Stamps per visit</label>
+        <select id="stampsPerVisit">
+          <option value="1">1 stamp per visit</option>
+          <option value="2">2 stamps per visit</option>
+          <option value="3">3 stamps per visit</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Minimum spend for stamp</label>
+        <input type="text" id="minSpend" placeholder="e.g. $5, £10, or leave blank for none"/>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Terms & Conditions (optional)</label>
+      <textarea id="termsText" placeholder="e.g. One stamp per visit. Cannot be combined with other offers. Management reserves the right to change terms."></textarea>
+    </div>
+  </div>
+
+  <button class="btn-save" onclick="saveSetup()">Save Card Setup</button>
+</div>
+
+<script>
+  function toast(msg,type='success'){
+    const old=document.querySelector('.toast');if(old)old.remove();
+    const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
+    document.body.appendChild(t);
+    setTimeout(()=>t.classList.add('show'),10);
+    setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),300)},3500);
+  }
+
+  function getCookie(name){
+    const value=`; ${document.cookie}`;
+    const parts=value.split(`; ${name}=`);
+    if(parts.length===2) return parts.pop().split(';').shift();
+    return '';
+  }
+
+  const bizName = decodeURIComponent(getCookie('merchantBizName')||localStorage.getItem('merchantBizName')||'My Business');
+  document.getElementById('topBizName').textContent = bizName;
+
+  let selectedStamps = 10;
+  const notifStates = {
+    halfway: false,
+    complete: true,
+    winback: false
+  };
+  const channelStates = {
+    halfway: { whatsapp: false, email: false, sms: false },
+    complete: { whatsapp: true, email: false, sms: false },
+    winback: { whatsapp: false, email: false, sms: false }
+  };
+
+  function buildStampSelector(){
+    const sel = document.getElementById('stampSelector');
+    sel.innerHTML = '';
+    [5,6,7,8,9,10,11,12].forEach(n => {
+      const div = document.createElement('div');
+      div.className = 'stamp-opt' + (n === selectedStamps ? ' selected' : '');
+      div.textContent = n;
+      div.onclick = () => {
+        selectedStamps = n;
+        document.querySelectorAll('.stamp-opt').forEach(el => el.classList.remove('selected'));
+        div.classList.add('selected');
+        updateBadges();
+      };
+      sel.appendChild(div);
+    });
+  }
+
+  function updateBadges(){
+    const half = Math.floor(selectedStamps/2);
+    document.getElementById('halfwayBadge').textContent = `At ${half} stamps`;
+    document.getElementById('completeBadge').textContent = `At ${selectedStamps} stamps`;
+  }
+
+  function toggleNotif(type){
+    notifStates[type] = !notifStates[type];
+    const toggle = document.getElementById(type+'Toggle');
+    const config = document.getElementById(type+'Config');
+    toggle.classList.toggle('on', notifStates[type]);
+    config.style.display = notifStates[type] ? 'block' : 'none';
+  }
+
+  function toggleChannel(notif, channel){
+    channelStates[notif][channel] = !channelStates[notif][channel];
+    const btn = document.getElementById(`${notif}-${channel}`);
+    btn.classList.toggle('active', channelStates[notif][channel]);
+  }
+
+  function saveSetup(){
+    const setup = {
+      stamps: selectedStamps,
+      reward: document.getElementById('rewardText').value,
+      expiry: document.getElementById('cardExpiry').value,
+      bonusStamps: document.getElementById('bonusStamps').value,
+      stampsPerVisit: document.getElementById('stampsPerVisit').value,
+      minSpend: document.getElementById('minSpend').value,
+      terms: document.getElementById('termsText').value,
+      notifications: {
+        halfway: {
+          enabled: notifStates.halfway,
+          message: document.getElementById('halfwayMsg').value,
+          channels: channelStates.halfway
+        },
+        complete: {
+          enabled: notifStates.complete,
+          message: document.getElementById('completeMsg').value,
+          channels: channelStates.complete
+        },
+        winback: {
+          enabled: notifStates.winback,
+          message: document.getElementById('winbackMsg').value,
+          channels: channelStates.winback
+        }
+      }
+    };
+
+    localStorage.setItem('wp-settings', JSON.stringify({
+      ...JSON.parse(localStorage.getItem('wp-settings')||'{}'),
+      stamps: selectedStamps,
+      reward: setup.reward
+    }));
+
+    localStorage.setItem('card-setup', JSON.stringify(setup));
+    toast('Card setup saved successfully!');
+
+    setTimeout(() => window.location.href = '/merchant-dashboard', 1500);
+  }
+
+  function loadSaved(){
+    const saved = JSON.parse(localStorage.getItem('card-setup')||'{}');
+    if(saved.stamps){
+      selectedStamps = saved.stamps;
+      buildStampSelector();
+    }
+    if(saved.reward) document.getElementById('rewardText').value = saved.reward;
+    if(saved.expiry) document.getElementById('cardExpiry').value = saved.expiry;
+    if(saved.bonusStamps) document.getElementById('bonusStamps').value = saved.bonusStamps;
+    if(saved.stampsPerVisit) document.getElementById('stampsPerVisit').value = saved.stampsPerVisit;
+    if(saved.minSpend) document.getElementById('minSpend').value = saved.minSpend;
+    if(saved.terms) document.getElementById('termsText').value = saved.terms;
+    if(saved.notifications){
+      Object.keys(saved.notifications).forEach(type => {
+        const n = saved.notifications[type];
+        if(n.enabled !== notifStates[type]){
+          notifStates[type] = n.enabled;
+          document.getElementById(type+'Toggle').classList.toggle('on', n.enabled);
+          document.getElementById(type+'Config').style.display = n.enabled ? 'block' : 'none';
+        }
+        if(document.getElementById(type+'Msg')) document.getElementById(type+'Msg').value = n.message||'';
+        if(n.channels){
+          Object.keys(n.channels).forEach(ch => {
+            channelStates[type][ch] = n.channels[ch];
+            document.getElementById(`${type}-${ch}`).classList.toggle('active', n.channels[ch]);
+          });
+        }
+      });
+    }
+    updateBadges();
+  }
+
+  buildStampSelector();
+  loadSaved();
+</script>
+</body>
+</html>
